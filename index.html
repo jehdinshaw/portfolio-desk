@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f3ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Portfolio">
+<title>Portfolio Desk</title>
+<style>
+:root{
+  --bg:#f5f3ee; --card:#fffdf9; --ink:#17171a; --muted:#6d6a63; --faint:#9b978e; --line:#e6e1d6;
+  --green:#1d6b45; --green-bg:#e3f0e8; --red:#b0352b; --red-bg:#f7e4e1; --accent:#14532d;
+  --chip:#efebe2; --bench:#a39f95; --warn:#8a5a00; --warn-bg:#fbf0d9;
+  --serif: ui-serif,"New York","Iowan Old Style",Charter,Georgia,serif;
+  --sans: -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0f1011; --card:#18191b; --ink:#ecebe6; --muted:#a39f96; --faint:#6f6c66; --line:#2a2b2e;
+  --green:#5cc48f; --green-bg:#15281d; --red:#ff7c6d; --red-bg:#2f1a18; --accent:#86d7ab;
+  --chip:#232427; --bench:#7a776f; --warn:#f0c46a; --warn-bg:#2c2416;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;overflow-x:hidden;background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans);font-variant-numeric:tabular-nums;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+a{color:var(--accent)}
+.hidden{display:none!important}
+
+/* header */
+.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)}
+.top-in{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 18px}
+.brand{flex:1;min-width:0}
+.fund{font-family:var(--serif);font-size:18px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asof{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--faint);flex:none}
+.dot.ok{background:var(--green)} .dot.busy{background:var(--warn);animation:pulse 1s infinite} .dot.err{background:var(--red)}
+@keyframes pulse{50%{opacity:.3}}
+.icon-btn{border:1px solid var(--line);background:var(--card);border-radius:10px;width:38px;height:38px;display:grid;place-items:center;cursor:pointer}
+.icon-btn svg{width:18px;height:18px}
+.desk-tabs{display:none}
+
+main{max-width:1080px;margin:0 auto;padding:18px 18px calc(96px + env(safe-area-inset-bottom))}
+.view{display:none} .view.on{display:block;animation:fade .18s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}}
+
+/* bottom tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:space-around;
+  background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+.tabs button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--faint);padding:4px 0;cursor:pointer}
+.tabs button svg{width:22px;height:22px}
+.tabs button.on{color:var(--ink)}
+@media (min-width:900px){
+  .tabs{display:none}
+  .desk-tabs{display:flex;gap:4px}
+  .desk-tabs button{background:none;border:0;padding:8px 12px;border-radius:9px;color:var(--muted);cursor:pointer}
+  .desk-tabs button.on{background:var(--chip);color:var(--ink)}
+  main{padding-bottom:60px}
+}
+
+/* type + cards */
+h2{font-family:var(--serif);font-weight:600;font-size:20px;letter-spacing:-.01em;margin:26px 0 10px}
+h2:first-child{margin-top:4px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.card+.card{margin-top:12px}
+.muted{color:var(--muted)} .faint{color:var(--faint)} .small{font-size:13px} .tiny{font-size:12px}
+.up{color:var(--green)} .down{color:var(--red)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--muted);white-space:nowrap}
+.pill.good{background:var(--green-bg);color:var(--green)} .pill.bad{background:var(--red-bg);color:var(--red)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
+.banner{border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:14px;background:var(--warn-bg);color:var(--warn)}
+.banner.bad{background:var(--red-bg);color:var(--red)}
+.banner button{margin-top:8px}
+
+/* overview hero */
+.hero{padding:6px 0 14px}
+.hero .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.hero .nav{font-family:var(--serif);font-size:44px;line-height:1.05;font-weight:600;letter-spacing:-.02em;margin:6px 0 8px}
+.hero .lines{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.stat .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat .v{font-size:17px;font-weight:600;margin-top:2px}
+@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)} .hero .nav{font-size:38px}}
+
+.chart-card{padding:12px 12px 8px}
+.chart-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:2px 4px 6px;flex-wrap:wrap}
+.legend{display:flex;gap:12px;font-size:13px}
+.legend i{display:inline-block;width:10px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.chips{display:flex;gap:4px}
+.chips button{border:0;background:none;padding:4px 9px;border-radius:8px;font-size:12px;color:var(--muted);cursor:pointer}
+.chips button.on{background:var(--chip);color:var(--ink);font-weight:600}
+.chart{width:100%;height:auto;display:block;touch-action:pan-y}
+.chart text{font-size:11px;fill:var(--faint)}
+.scrub{font-size:12px;color:var(--muted);min-height:18px;padding:0 4px}
+
+/* lists */
+.list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left}
+.row:first-child{border-top:0}
+.row:active{background:var(--chip)}
+.row .main{flex:1;min-width:0}
+.row .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .s{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .r{text-align:right;white-space:nowrap}
+.empty{padding:22px 16px;text-align:center;color:var(--muted);font-size:14px}
+.tick{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--chip);border-radius:7px;padding:3px 6px;min-width:52px;text-align:center}
+
+/* forms */
+label.f{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
+input.in,textarea.in,select.in{width:100%;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 12px;font-size:16px;outline:none}
+input.in:focus,textarea.in:focus,select.in:focus{border-color:var(--ink)}
+textarea.in{resize:vertical;line-height:1.5}
+.big-input{font-size:22px!important;font-weight:600;letter-spacing:.02em}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.seg{display:flex;background:var(--chip);border-radius:11px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:8px 6px;font-size:14px;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.seg.side button.on[data-v=BUY]{color:var(--green)} .seg.side button.on[data-v=SELL]{color:var(--red)}
+.hint{font-size:13px;color:var(--muted);margin-top:6px;min-height:18px}
+.conv{display:flex;gap:6px}
+.conv button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:13px;color:var(--muted)}
+.conv button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:11px;padding:10px 14px;cursor:pointer;font-size:15px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.btn.wide{width:100%;padding:14px;font-size:16px;margin-top:18px}
+.btn.danger{color:var(--red)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.rules{font-size:13px;color:var(--muted);background:var(--chip);border-radius:11px;padding:10px 12px;margin-top:16px}
+.wc{font-size:12px;color:var(--faint);text-align:right;margin-top:4px}
+.two-col{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.two-col>div{min-width:0}
+@media (min-width:900px){.two-col{grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:start}}
+
+/* heatmap */
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,1fr);gap:3px;margin-top:10px}
+.heat span{aspect-ratio:1;border-radius:3px;background:var(--chip)}
+.heat span.l1{background:color-mix(in srgb,var(--green) 35%,var(--chip))}
+.heat span.l2{background:color-mix(in srgb,var(--green) 65%,var(--chip))}
+.heat span.l3{background:var(--green)}
+.heat span.today{outline:1.5px solid var(--ink);outline-offset:1px}
+.heat-months{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:6px}
+
+/* markdown */
+.md{font-size:15px;line-height:1.6}
+.md h1,.md h2,.md h3{font-family:var(--serif);margin:18px 0 6px;font-size:18px}
+.md h1{font-size:22px}
+.md p{margin:8px 0} .md ul,.md ol{margin:6px 0;padding-left:22px}
+.md code{font-family:var(--mono);font-size:13px;background:var(--chip);padding:1px 5px;border-radius:5px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px;margin:10px 0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right}
+.quote{border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:8px 0;white-space:pre-wrap}
+
+/* sheet + toast */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:20;display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+.sheet{background:var(--bg);width:100%;max-width:620px;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:8px 18px calc(22px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+@media (min-width:700px){.scrim{align-items:center}.sheet{border-radius:18px;padding-bottom:22px}}
+.grab{width:38px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 10px}
+.sheet h3{font-family:var(--serif);font-size:21px;margin:6px 0 4px}
+.toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;z-index:30;
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;transition:.2s;width:max-content;max-width:min(90vw,440px);text-align:center;pointer-events:none}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.steps{margin:8px 0 0;padding-left:20px;font-size:14px}
+.steps li{margin:6px 0}
+.progress li.done::marker{content:"✓  ";color:var(--green)}
+.progress li.err::marker{content:"✕  ";color:var(--red)}
+code.k{font-family:var(--mono);font-size:13px;background:var(--chip);padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand">
+    <div class="fund" id="fundName">Portfolio Desk</div>
+    <div class="asof"><span class="dot" id="syncDot"></span><span id="asOf">Not connected</span></div>
+  </div>
+  <div class="desk-tabs" id="deskTabs"></div>
+  <button class="icon-btn" id="refreshBtn" aria-label="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+</div></header>
+
+<main>
+  <section class="view" id="view-overview"></section>
+  <section class="view" id="view-trade"></section>
+  <section class="view" id="view-journal"></section>
+  <section class="view" id="view-record"></section>
+  <section class="view" id="view-settings"></section>
+</main>
+
+<nav class="tabs" id="tabs"></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const APP_VERSION = "1.0.0";
+const REPO_FILES = {"engine/engine.py": "#!/usr/bin/env python3\n\"\"\"\nTrack-record engine for a $10M paper portfolio.\n\n  stamp   log GitHub's push time and a SHA-256 fingerprint for every new or\n          changed file in orders/, cancels/, journal/ and research/\n  close   fill pending orders at the official 4:00 PM ET close, apply splits\n          and dividends, mark the book to market, rebuild README.md, and\n          anchor a digest of the ledger with OpenTimestamps\n  due     quick check (standard library only) for whether `close` has work\n\nThe one rule everything follows: a timestamp from my own device never counts.\nAn order is placed when GitHub received the push, and it fills at the first\nofficial close after that moment. Prices only ever come from the bot.\n\"\"\"\nfrom __future__ import annotations\n\nimport argparse\nimport datetime as dt\nimport hashlib\nimport json\nimport math\nimport os\nimport re\nimport subprocess\nimport sys\nimport time\nfrom pathlib import Path\nfrom zoneinfo import ZoneInfo\n\nET = ZoneInfo(\"America/New_York\")\nUTC = dt.timezone.utc\nROOT = Path(os.environ.get(\"REPO_ROOT\") or Path(__file__).resolve().parent.parent)\nDATA = ROOT / \"data\"\nPROOFS = ROOT / \"proofs\"\nSTAMPED = (\"orders/\", \"cancels/\", \"journal/\", \"research/\")\nBOT_PATHS = (\"data\", \"proofs\", \"README.md\")\nCLOSE_TIME = dt.time(16, 0)\nSETTLE_MINUTES = 15  # how long after the bell before a closing price is trusted\nTICKER_RE = re.compile(r\"^[A-Z0-9][A-Z0-9\\-\\^=]{0,11}$\")\n\nDEFAULT_CONFIG = {\n    \"fund_name\": \"Paper Portfolio\",\n    \"manager\": \"\",\n    \"starting_cash\": 10_000_000,\n    \"inception\": None,\n    \"benchmark\": \"SPY\",\n    \"slippage_bps\": 5,\n    \"commission_bps\": 1,\n}\n\n\n# --------------------------------------------------------------------------- helpers\ndef log(*a):\n    print(*a, file=sys.stderr, flush=True)\n\n\ndef git(*args, binary=False, check=True):\n    r = subprocess.run([\"git\", *args], cwd=ROOT, capture_output=True)\n    if check and r.returncode != 0:\n        raise RuntimeError(f\"git {' '.join(args)} failed: {r.stderr.decode(errors='replace')}\")\n    return r.stdout if binary else r.stdout.decode()\n\n\ndef utcnow():\n    return dt.datetime.now(UTC)\n\n\ndef iso(t: dt.datetime) -> str:\n    return t.astimezone(UTC).strftime(\"%Y-%m-%dT%H:%M:%SZ\")\n\n\ndef parse_iso(s: str) -> dt.datetime:\n    return dt.datetime.fromisoformat(s.replace(\"Z\", \"+00:00\"))\n\n\ndef close_dt(day: str) -> dt.datetime:\n    return dt.datetime.combine(dt.date.fromisoformat(day), CLOSE_TIME, ET)\n\n\ndef read_json(path: Path, default):\n    try:\n        return json.loads(path.read_text())\n    except FileNotFoundError:\n        return default\n\n\ndef write_json(path: Path, obj):\n    path.parent.mkdir(parents=True, exist_ok=True)\n    path.write_text(json.dumps(obj, indent=2) + \"\\n\")\n\n\ndef read_jsonl(path: Path):\n    if not path.exists():\n        return []\n    return [json.loads(l) for l in path.read_text().splitlines() if l.strip()]\n\n\ndef append_jsonl(path: Path, rows):\n    if not rows:\n        return\n    path.parent.mkdir(parents=True, exist_ok=True)\n    with path.open(\"a\") as f:\n        for r in rows:\n            f.write(json.dumps(r, sort_keys=True) + \"\\n\")\n\n\ndef sha256_file(path: Path) -> str:\n    return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else \"-\"\n\n\ndef load_config():\n    cfg = dict(DEFAULT_CONFIG)\n    cfg.update(read_json(ROOT / \"config.json\", {}))\n    if not cfg.get(\"inception\"):\n        cfg[\"inception\"] = dt.datetime.now(ET).date().isoformat()\n    cfg[\"benchmark\"] = cfg[\"benchmark\"].upper()\n    return cfg\n\n\n# --------------------------------------------------------------------------- receipts\ndef tree_blobs(ref: str) -> dict[str, str]:\n    \"\"\"Path -> git blob id for every stamped file in the tree at `ref`.\"\"\"\n    out = git(\"ls-tree\", \"-r\", \"-z\", ref)\n    res = {}\n    for entry in out.split(\"\\0\"):\n        if not entry:\n            continue\n        meta, path = entry.split(\"\\t\", 1)\n        _mode, typ, blob = meta.split()\n        if typ == \"blob\" and path.startswith(STAMPED) and not path.endswith(\".gitkeep\"):\n            res[path] = blob\n    return res\n\n\ndef stamp(ref: str, received_at: dt.datetime, source: str, commit: str | None = None):\n    receipts = read_jsonl(DATA / \"receipts.jsonl\")\n    seen = {(r[\"path\"], r[\"blob\"]) for r in receipts}\n    new = []\n    for path, blob in sorted(tree_blobs(ref).items()):\n        if (path, blob) in seen:\n            continue\n        content = git(\"cat-file\", \"blob\", blob, binary=True)\n        row = {\n            \"path\": path,\n            \"blob\": blob,\n            \"sha256\": hashlib.sha256(content).hexdigest(),\n            \"received_at\": iso(received_at),\n            \"source\": source,\n        }\n        if commit:\n            row[\"commit\"] = commit\n        new.append(row)\n    append_jsonl(DATA / \"receipts.jsonl\", new)\n    log(f\"stamped {len(new)} file(s) at {iso(received_at)} ({source})\")\n    return new\n\n\ndef receipt_index():\n    idx = {}\n    for r in read_jsonl(DATA / \"receipts.jsonl\"):\n        key = (r[\"path\"], r[\"blob\"])\n        if key not in idx or r[\"received_at\"] < idx[key]:\n            idx[key] = r[\"received_at\"]\n    return idx\n\n\n# --------------------------------------------------------------------------- prices\ndef _from_yahoo(df):\n    rows = []\n    for idx, r in df.iterrows():\n        c = r.get(\"Close\")\n        if c is None or (isinstance(c, float) and math.isnan(c)):\n            continue\n        a = r.get(\"Adj Close\", c)\n        a = c if a is None or (isinstance(a, float) and math.isnan(a)) else a\n        dv = r.get(\"Dividends\", 0) or 0\n        sp = r.get(\"Stock Splits\", 0) or 0\n        rows.append((idx.date().isoformat(), float(c), float(a),\n                     0.0 if math.isnan(float(dv)) else float(dv),\n                     0.0 if math.isnan(float(sp)) else float(sp)))\n    rows.sort()\n    # Yahoo divides every historical close by all later splits. Undo that so each\n    # close is the price that actually printed that day, consistent with share counts.\n    out, factor = {}, 1.0\n    for d, c, a, dv, sp in reversed(rows):\n        out[d] = {\"close\": c * factor, \"adj\": a, \"div\": dv * factor, \"split\": sp}\n        if sp and sp > 0:\n            factor *= sp\n    return out\n\n\ndef _fetch_yahoo(ticker, start, end):\n    import yfinance as yf\n\n    try:  # yfinance 1.x hides errors by default; we need to tell \"unknown ticker\" from \"rate limited\"\n        yf.config.debug.hide_exceptions = False\n        extra = {}\n    except AttributeError:\n        extra = {\"raise_errors\": True}\n    last = None\n    for wait in (0, 5, 20, 60):\n        if wait:\n            time.sleep(wait)\n        try:\n            df = yf.Ticker(ticker).history(start=start, end=end, auto_adjust=False, actions=True, **extra)\n            if df is not None and len(df):\n                return _from_yahoo(df)\n            return {}\n        except Exception as e:  # rate limits, network blips, unknown tickers\n            last = e\n            msg = str(e).lower()\n            if any(k in msg for k in (\"delisted\", \"no data\", \"not found\", \"404\", \"no timezone\")):\n                return {}\n    log(f\"yahoo failed for {ticker}: {last}\")\n    return None\n\n\ndef _fetch_stooq(ticker, start, end):\n    import csv\n    import io\n    import urllib.request\n\n    url = (f\"https://stooq.com/q/d/l/?s={ticker.lower()}.us&i=d\"\n           f\"&d1={start.strftime('%Y%m%d')}&d2={end.strftime('%Y%m%d')}\")\n    try:\n        with urllib.request.urlopen(url, timeout=30) as r:\n            text = r.read().decode()\n    except Exception as e:\n        log(f\"stooq failed for {ticker}: {e}\")\n        return None\n    if not text.startswith(\"Date\"):\n        return None\n    out = {}\n    for row in csv.DictReader(io.StringIO(text)):\n        try:\n            c = float(row[\"Close\"])\n        except (KeyError, ValueError):\n            continue\n        out[row[\"Date\"]] = {\"close\": c, \"adj\": c, \"div\": 0.0, \"split\": 0.0}\n    return out\n\n\ndef fetch_prices(tickers, start: dt.date, end: dt.date):\n    \"\"\"{ticker: {YYYY-MM-DD: {close, adj, div, split}}}. None for a ticker = source failure.\"\"\"\n    fixture = os.environ.get(\"PRICE_FIXTURE\")\n    if fixture:\n        data = json.loads(Path(fixture).read_text())\n        return {t: {d: b for d, b in data.get(t, {}).items() if start.isoformat() <= d < end.isoformat()}\n                for t in tickers}\n    out = {}\n    for t in sorted(set(tickers)):\n        bars = _fetch_yahoo(t, start, end)\n        if not bars:\n            alt = _fetch_stooq(t, start, end)\n            bars = alt if alt else bars\n        out[t] = bars\n    return out\n\n\ndef last_bar_on_or_before(series, day):\n    keys = [d for d in series if d <= day]\n    return series[max(keys)] if keys else None\n\n\n# --------------------------------------------------------------------------- the book\ndef load_state(cfg):\n    s = read_json(DATA / \"state.json\", None)\n    if s:\n        return s\n    return {\n        \"cash\": float(cfg[\"starting_cash\"]),\n        \"positions\": {},\n        \"last_date\": None,\n        \"last_nav\": float(cfg[\"starting_cash\"]),\n        \"bench_index\": 100.0,\n        \"realized_pnl\": 0.0,\n        \"dividends\": 0.0,\n        \"costs\": 0.0,\n    }\n\n\ndef load_orders(blobs, rindex):\n    orders, cancels = {}, {}\n    for path, blob in blobs.items():\n        if not path.endswith(\".json\") or not path.startswith((\"orders/\", \"cancels/\")):\n            continue\n        received = rindex.get((path, blob))\n        if not received:\n            continue\n        try:\n            obj = json.loads((ROOT / path).read_text())\n            assert isinstance(obj, dict)\n        except Exception as e:\n            log(f\"skipping unreadable {path}: {e}\")\n            continue\n        obj[\"_path\"], obj[\"_received_at\"] = path, received\n        if path.startswith(\"orders/\"):\n            obj[\"id\"] = Path(path).stem\n            orders[obj[\"id\"]] = obj\n        else:\n            cancels[obj.get(\"order_id\") or Path(path).stem] = obj\n    return orders, cancels\n\n\ndef fill_order(o, day, state, cfg, prices, now):\n    \"\"\"Return a fill record, or None if the order should keep waiting.\"\"\"\n    t = str(o.get(\"ticker\", \"\")).strip().upper().replace(\".\", \"-\")\n    side = str(o.get(\"side\", \"\")).strip().upper()\n    sizing = o.get(\"sizing\") or {}\n    kind, value = sizing.get(\"type\"), sizing.get(\"value\")\n    base = {\"order_id\": o[\"id\"], \"path\": o[\"_path\"], \"date\": day, \"ticker\": t, \"side\": side,\n            \"received_at\": o[\"_received_at\"], \"processed_at\": iso(now)}\n\n    def reject(reason):\n        return {**base, \"status\": \"REJECTED\", \"reason\": reason}\n\n    if not TICKER_RE.match(t):\n        return reject(\"invalid ticker\")\n    if side not in (\"BUY\", \"SELL\"):\n        return reject(\"side must be BUY or SELL\")\n    series = prices.get(t) or {}\n    bar = series.get(day)\n    if not bar:\n        if not series:\n            return reject(f\"no price data for {t}\")\n        if (dt.date.fromisoformat(day) - parse_iso(o[\"_received_at\"]).date()).days > 7:\n            return reject(f\"no closing price for {t} in 7 days\")\n        return None  # halted or missing bar; try again next close\n\n    close = bar[\"close\"]\n    slip = cfg[\"slippage_bps\"] / 1e4\n    comm = cfg[\"commission_bps\"] / 1e4\n    price = close * (1 + slip) if side == \"BUY\" else close * (1 - slip)\n    pos = state[\"positions\"].get(t, {\"shares\": 0, \"cost\": 0.0})\n    held = pos[\"shares\"]\n    try:\n        if kind == \"shares\":\n            qty = math.floor(float(value))\n        elif kind == \"notional\":\n            qty = math.floor(float(value) / price)\n            if side == \"SELL\":\n                qty = min(qty, held)\n        elif kind == \"all\":\n            if side != \"SELL\":\n                return reject(\"'all' only works on a sell\")\n            qty = held\n        else:\n            return reject(\"sizing must be shares, notional or all\")\n    except (TypeError, ValueError):\n        return reject(\"order size is not a number\")\n    if qty <= 0:\n        return reject(\"no shares held\" if side == \"SELL\" and held == 0 else \"order rounds to zero shares\")\n    if side == \"SELL\" and qty > held:\n        return reject(f\"only {held:,} shares held (no shorting)\")\n\n    notional = qty * price\n    commission = notional * comm\n    slippage = qty * close * slip\n    fill = {**base, \"status\": \"FILLED\", \"shares\": qty, \"close\": round(close, 4),\n            \"price\": round(price, 4), \"notional\": round(notional, 2),\n            \"commission\": round(commission, 2), \"slippage\": round(slippage, 2)}\n    if side == \"BUY\":\n        if notional + commission > state[\"cash\"] + 1e-6:\n            return reject(f\"needs ${notional + commission:,.0f} but only ${state['cash']:,.0f} cash\")\n        state[\"cash\"] -= notional + commission\n        pos[\"shares\"] = held + qty\n        pos[\"cost\"] = pos[\"cost\"] + notional + commission\n        state[\"positions\"][t] = pos\n    else:\n        basis = pos[\"cost\"] * qty / held\n        proceeds = notional - commission\n        realized = proceeds - basis\n        state[\"cash\"] += proceeds\n        state[\"realized_pnl\"] += realized\n        pos[\"shares\"] = held - qty\n        pos[\"cost\"] -= basis\n        fill[\"cost_basis\"] = round(basis, 2)\n        fill[\"realized_pnl\"] = round(realized, 2)\n        if pos[\"shares\"] == 0:\n            state[\"positions\"].pop(t, None)\n        else:\n            state[\"positions\"][t] = pos\n    state[\"costs\"] += commission + slippage\n    return fill\n\n\ndef corporate_actions(day, state, prices):\n    events = []\n    for t, pos in list(state[\"positions\"].items()):\n        bar = (prices.get(t) or {}).get(day)\n        if not bar:\n            continue\n        ratio = bar.get(\"split\") or 0\n        if ratio > 0 and ratio != 1:\n            before = pos[\"shares\"]\n            exact = before * ratio\n            after = math.floor(exact + 1e-9)\n            ev = {\"date\": day, \"type\": \"SPLIT\", \"ticker\": t, \"ratio\": ratio,\n                  \"shares_before\": before, \"shares_after\": after}\n            frac = exact - after\n            if frac > 1e-9:  # cash in lieu of fractional shares\n                cash = frac * bar[\"close\"]\n                basis = pos[\"cost\"] * frac / exact\n                state[\"cash\"] += cash\n                state[\"realized_pnl\"] += cash - basis\n                pos[\"cost\"] -= basis\n                ev[\"cash_in_lieu\"] = round(cash, 2)\n            pos[\"shares\"] = after\n            if after == 0:\n                state[\"positions\"].pop(t, None)\n            events.append(ev)\n        div = bar.get(\"div\") or 0\n        if div > 0 and t in state[\"positions\"]:\n            amount = state[\"positions\"][t][\"shares\"] * div\n            state[\"cash\"] += amount\n            state[\"dividends\"] += amount\n            events.append({\"date\": day, \"type\": \"DIVIDEND\", \"ticker\": t, \"per_share\": div,\n                           \"shares\": state[\"positions\"][t][\"shares\"], \"amount\": round(amount, 2)})\n    return events\n\n\ndef mark(day, state, prices):\n    value = 0.0\n    for t, pos in state[\"positions\"].items():\n        bar = last_bar_on_or_before(prices.get(t) or {}, day)\n        px = bar[\"close\"] if bar else pos.get(\"last_price\") or (pos[\"cost\"] / pos[\"shares\"])\n        pos[\"last_price\"] = round(px, 4)\n        pos[\"last_date\"] = day\n        value += pos[\"shares\"] * px\n    return value\n\n\nNAV_FIELDS = [\"date\", \"nav\", \"cash\", \"long_value\", \"positions\", \"daily_return\",\n              \"nav_index\", \"bench_close\", \"bench_index\", \"bench_return\"]\n\n\ndef read_nav():\n    path = DATA / \"nav.csv\"\n    if not path.exists():\n        return []\n    lines = path.read_text().splitlines()\n    head = lines[0].split(\",\")\n    rows = []\n    for l in lines[1:]:\n        if not l.strip():\n            continue\n        r = dict(zip(head, l.split(\",\")))\n        for k in head:\n            if k != \"date\":\n                r[k] = float(r[k])\n        rows.append(r)\n    return rows\n\n\ndef append_nav(row):\n    path = DATA / \"nav.csv\"\n    path.parent.mkdir(parents=True, exist_ok=True)\n    new = not path.exists()\n    with path.open(\"a\") as f:\n        if new:\n            f.write(\",\".join(NAV_FIELDS) + \"\\n\")\n        f.write(\",\".join(str(row[k]) for k in NAV_FIELDS) + \"\\n\")\n\n\n# --------------------------------------------------------------------------- close\ndef cmd_close(now: dt.datetime):\n    cfg = load_config()\n    PROOFS.mkdir(exist_ok=True)\n    stamped = stamp(\"HEAD\", now, \"close-fallback\")  # anything the push job missed\n    rindex = receipt_index()\n    blobs = tree_blobs(\"HEAD\")\n    orders, cancels = load_orders(blobs, rindex)\n    done = {f[\"order_id\"] for f in read_jsonl(DATA / \"fills.jsonl\")}\n    state = load_state(cfg)\n    bench = cfg[\"benchmark\"]\n\n    pending = {k: v for k, v in orders.items() if k not in done}\n    tickers = {bench, *state[\"positions\"].keys()}\n    tickers |= {str(o.get(\"ticker\", \"\")).strip().upper().replace(\".\", \"-\") for o in pending.values()}\n    tickers = {t for t in tickers if TICKER_RE.match(t)}\n\n    since = dt.date.fromisoformat(state[\"last_date\"] or cfg[\"inception\"]) - dt.timedelta(days=10)\n    today = now.astimezone(ET).date()\n    prices = fetch_prices(tickers, since, today + dt.timedelta(days=1))\n    if not prices.get(bench):\n        raise SystemExit(f\"could not load {bench} prices; will retry on the next run\")\n    failed = {t for t, v in prices.items() if v is None}\n    if failed & set(state[\"positions\"]):\n        raise SystemExit(f\"price source failed for held tickers {sorted(failed)}; will retry\")\n    prices = {t: (v or {}) for t, v in prices.items()}\n\n    def ticker_of(o):\n        return str(o.get(\"ticker\", \"\")).strip().upper().replace(\".\", \"-\")\n\n    days = [d for d in sorted(prices[bench])\n            if d >= cfg[\"inception\"]\n            and (state[\"last_date\"] is None or d > state[\"last_date\"])\n            and now >= close_dt(d) + dt.timedelta(minutes=SETTLE_MINUTES)]\n    if not days:\n        log(\"no new close to process\")\n        if stamped:\n            write_readme(cfg, state)\n        return False\n\n    fills, events = [], []\n    for day in days:\n        bell = close_dt(day)\n        events += corporate_actions(day, state, prices)\n\n        waiting = [o for o in orders.values() if o[\"id\"] not in done]\n        for o in waiting:\n            c = cancels.get(o[\"id\"])\n            if c and parse_iso(c[\"_received_at\"]) < bell:\n                fills.append({\"order_id\": o[\"id\"], \"path\": o[\"_path\"], \"date\": day, \"status\": \"CANCELLED\",\n                              \"ticker\": str(o.get(\"ticker\", \"\")).upper(), \"side\": str(o.get(\"side\", \"\")).upper(),\n                              \"received_at\": o[\"_received_at\"], \"cancel_received_at\": c[\"_received_at\"],\n                              \"processed_at\": iso(now)})\n                done.add(o[\"id\"])\n\n        # an order whose prices couldn't be downloaded just waits for the next run\n        live = [o for o in waiting if o[\"id\"] not in done and parse_iso(o[\"_received_at\"]) < bell\n                and ticker_of(o) not in failed]\n        live.sort(key=lambda o: (0 if str(o.get(\"side\", \"\")).upper() == \"SELL\" else 1, o[\"_received_at\"], o[\"id\"]))\n        for o in live:\n            f = fill_order(o, day, state, cfg, prices, now)\n            if f:\n                fills.append(f)\n                done.add(o[\"id\"])\n\n        long_value = mark(day, state, prices)\n        nav = state[\"cash\"] + long_value\n        bbar = prices[bench][day]\n        prev = state[\"last_date\"]\n        if prev and prev in prices[bench]:\n            bret = bbar[\"adj\"] / prices[bench][prev][\"adj\"] - 1\n            state[\"bench_index\"] *= 1 + bret\n        else:\n            bret = 0.0\n        append_nav({\n            \"date\": day,\n            \"nav\": round(nav, 2),\n            \"cash\": round(state[\"cash\"], 2),\n            \"long_value\": round(long_value, 2),\n            \"positions\": len(state[\"positions\"]),\n            \"daily_return\": round(nav / state[\"last_nav\"] - 1, 8),\n            \"nav_index\": round(nav / cfg[\"starting_cash\"] * 100, 6),\n            \"bench_close\": round(bbar[\"close\"], 4),\n            \"bench_index\": round(state[\"bench_index\"], 6),\n            \"bench_return\": round(bret, 8),\n        })\n        state[\"last_date\"], state[\"last_nav\"] = day, nav\n\n    state[\"updated_at\"] = iso(now)\n    append_jsonl(DATA / \"fills.jsonl\", fills)\n    append_jsonl(DATA / \"events.jsonl\", events)\n    for p in state[\"positions\"].values():\n        p[\"cost\"] = round(p[\"cost\"], 4)\n    for k in (\"cash\", \"realized_pnl\", \"dividends\", \"costs\", \"last_nav\"):\n        state[k] = round(state[k], 4)\n    write_json(DATA / \"state.json\", state)\n    write_readme(cfg, state)\n    write_digest(cfg, state, now)\n    log(f\"processed {days[0]}..{days[-1]}: {len(fills)} order result(s), {len(events)} event(s), NAV {state['last_nav']:,.2f}\")\n    return True\n\n\n# --------------------------------------------------------------------------- proofs\ndef write_digest(cfg, state, now):\n    \"\"\"Hash the whole ledger as of this close, chain it to the last digest, anchor it.\"\"\"\n    day = state[\"last_date\"]\n    path = PROOFS / day[:4] / f\"{day}.txt\"\n    path.parent.mkdir(parents=True, exist_ok=True)\n    index_path = PROOFS / \"index.json\"\n    index = read_json(index_path, {\"last\": None, \"pending\": []})\n    prev = index.get(\"last\")\n    lines = [\n        f\"Ledger digest for {cfg['fund_name']}\",\n        f\"as_of_close: {day}\",\n        f\"generated_at: {iso(now)}\",\n        f\"previous_digest: {prev['path']} sha256={prev['sha256']}\" if prev else \"previous_digest: none\",\n    ]\n    for name in (\"receipts.jsonl\", \"fills.jsonl\", \"events.jsonl\", \"nav.csv\", \"state.json\"):\n        lines.append(f\"data/{name} sha256={sha256_file(DATA / name)}\")\n    path.write_text(\"\\n\".join(lines) + \"\\n\")\n    rel = str(path.relative_to(ROOT))\n\n    still = []\n    for p in index.get(\"pending\", [])[-20:]:\n        if (ROOT / p).exists() and ots(\"upgrade\", ROOT / p) != \"complete\":\n            still.append(p)\n    if ots(\"stamp\", path) == \"ok\":\n        still.append(rel + \".ots\")\n    write_json(index_path, {\"last\": {\"path\": rel, \"sha256\": sha256_file(path)}, \"pending\": still})\n\n\ndef ots(action, path: Path):\n    \"\"\"Best effort: OpenTimestamps needs network access to public calendars.\"\"\"\n    try:\n        r = subprocess.run([\"ots\", action, str(path)], cwd=ROOT, capture_output=True, text=True, timeout=90)\n    except (FileNotFoundError, subprocess.TimeoutExpired) as e:\n        log(f\"ots {action} skipped: {e}\")\n        return \"skipped\"\n    finally:\n        bak = Path(str(path) + \".bak\")\n        if bak.exists():\n            bak.unlink()\n    out = (r.stdout + r.stderr).lower()\n    if action == \"upgrade\":\n        return \"complete\" if \"timestamp complete\" in out and \"not complete\" not in out else \"pending\"\n    return \"ok\" if r.returncode == 0 and Path(str(path) + \".ots\").exists() else \"failed\"\n\n\n# --------------------------------------------------------------------------- README\ndef money(x, cents=False):\n    s = f\"{abs(x):,.2f}\" if cents else f\"{abs(x):,.0f}\"\n    return f\"-${s}\" if x < 0 else f\"${s}\"\n\n\ndef pct(x, plus=True, digits=2):\n    if x is None:\n        return \"—\"\n    return f\"{x * 100:+.{digits}f}%\" if plus else f\"{x * 100:.{digits}f}%\"\n\n\ndef stats(rets):\n    n = len(rets)\n    if n < 2:\n        return None\n    mean = sum(rets) / n\n    var = sum((r - mean) ** 2 for r in rets) / (n - 1)\n    sd = math.sqrt(var)\n    return {\"vol\": sd * math.sqrt(252), \"sharpe\": (mean / sd * math.sqrt(252)) if sd > 0 else None}\n\n\ndef max_drawdown(index):\n    peak, mdd = -1e18, 0.0\n    for v in index:\n        peak = max(peak, v)\n        mdd = min(mdd, v / peak - 1)\n    return mdd\n\n\ndef beta(a, b):\n    n = len(a)\n    if n < 10:\n        return None\n    ma, mb = sum(a) / n, sum(b) / n\n    cov = sum((x - ma) * (y - mb) for x, y in zip(a, b)) / (n - 1)\n    var = sum((y - mb) ** 2 for y in b) / (n - 1)\n    return cov / var if var > 0 else None\n\n\ndef weekday_streaks(dates):\n    ds = sorted({dt.date.fromisoformat(d) for d in dates if dt.date.fromisoformat(d).weekday() < 5})\n    best = cur = 0\n    prev = None\n    for d in ds:\n        nxt = prev + dt.timedelta(days=1) if prev else None\n        while nxt and nxt.weekday() >= 5:\n            nxt += dt.timedelta(days=1)\n        cur = cur + 1 if prev and d == nxt else 1\n        best = max(best, cur)\n        prev = d\n    return len(ds), best\n\n\ndef esc(s):\n    return str(s).replace(\"|\", \"\\\\|\").replace(\"\\n\", \" \").strip()\n\n\ndef first_sentence(text, limit=110):\n    text = \" \".join(str(text or \"\").split())\n    m = re.match(r\"(.+?[.!?])(\\s|$)\", text)\n    s = m.group(1) if m else text\n    return s if len(s) <= limit else s[: limit - 1].rstrip() + \"…\"\n\n\ndef write_readme(cfg, state):\n    nav = read_nav()\n    fills = read_jsonl(DATA / \"fills.jsonl\")\n    blobs = list(tree_blobs(\"HEAD\").keys())\n    journal_days = [m.group(1) for p in blobs if (m := re.search(r\"journal/.*?(\\d{4}-\\d{2}-\\d{2})\\.md$\", p))]\n    research = [p for p in blobs if p.startswith(\"research/\") and p.endswith(\".md\")]\n    order_files = [p for p in blobs if p.startswith(\"orders/\") and p.endswith(\".json\")]\n    write_svg(nav, cfg)\n\n    name = cfg[\"fund_name\"]\n    who = f\"**{cfg['manager']}** · \" if cfg.get(\"manager\") else \"\"\n    out = [f\"# {name}\", \"\",\n           f\"{who}Paper portfolio · started {fmt_date(cfg['inception'])} with {money(cfg['starting_cash'])} · \"\n           f\"benchmark {cfg['benchmark']} (total return)\", \"\"]\n\n    if nav:\n        last = nav[-1]\n        p_ret = last[\"nav_index\"] / 100 - 1\n        b_ret = last[\"bench_index\"] / 100 - 1\n        pr = [r[\"daily_return\"] for r in nav[1:]]\n        br = [r[\"bench_return\"] for r in nav[1:]]\n        ps, bs = stats(pr), stats(br)\n        b = beta(pr, br)\n        enough = len(nav) >= 20\n\n        def vol(s):\n            return pct(s[\"vol\"], False, 1) if s and enough else \"—\"\n\n        def sharpe(s):\n            return f\"{s['sharpe']:.2f}\" if s and enough and s[\"sharpe\"] is not None else \"—\"\n\n        out += [\"![Portfolio vs benchmark](data/performance.svg)\", \"\",\n                f\"| As of the {fmt_date(last['date'])} close | Portfolio | {cfg['benchmark']} |\",\n                \"|---|---:|---:|\",\n                f\"| Return since inception | **{pct(p_ret)}** | {pct(b_ret)} |\",\n                f\"| Annualized volatility | {vol(ps)} | {vol(bs)} |\",\n                f\"| Sharpe ratio (rf = 0) | {sharpe(ps)} | {sharpe(bs)} |\",\n                f\"| Max drawdown | {pct(max_drawdown([r['nav_index'] for r in nav]))} | {pct(max_drawdown([r['bench_index'] for r in nav]))} |\",\n                \"\",\n                f\"NAV **{money(last['nav'])}** · cash {pct(last['cash'] / last['nav'], False, 1)} · \"\n                f\"{int(last['positions'])} positions\"\n                + (f\" · beta {b:.2f}\" if b is not None else \"\")\n                + f\" · {len(nav)} trading days\", \"\"]\n        if not enough:\n            out += [\"_Volatility and Sharpe show up after 20 trading days._\", \"\"]\n    else:\n        out += [f\"No closes recorded yet. The first mark happens after the next 4:00 PM ET close.\", \"\"]\n\n    if state[\"positions\"]:\n        total = state[\"last_nav\"]\n        out += [\"## Positions\", \"\", \"| Ticker | Shares | Avg cost | Last | Value | Weight | P&L |\",\n                \"|---|---:|---:|---:|---:|---:|---:|\"]\n        rows = sorted(state[\"positions\"].items(), key=lambda kv: -kv[1][\"shares\"] * kv[1].get(\"last_price\", 0))\n        for t, p in rows:\n            v = p[\"shares\"] * p.get(\"last_price\", 0)\n            pnl = v - p[\"cost\"]\n            out.append(f\"| {t} | {p['shares']:,} | {money(p['cost'] / p['shares'], True)} | \"\n                       f\"{money(p.get('last_price', 0), True)} | {money(v)} | {pct(v / total, False, 1)} | \"\n                       f\"{money(pnl)} ({pct(pnl / p['cost'] if p['cost'] else 0)}) |\")\n        out.append(\"\")\n\n    filled = [f for f in fills if f[\"status\"] == \"FILLED\"]\n    if filled:\n        out += [\"## Recent trades\", \"\", \"| Close | Trade | Price | Why |\", \"|---|---|---:|---|\"]\n        for f in list(reversed(filled))[:15]:\n            thesis = \"\"\n            try:\n                thesis = json.loads((ROOT / f[\"path\"]).read_text()).get(\"thesis\", \"\")\n            except Exception:\n                pass\n            trade = f\"{'Bought' if f['side'] == 'BUY' else 'Sold'} {f['shares']:,} {f['ticker']}\"\n            if f.get(\"realized_pnl\") is not None:\n                trade += f\" ({money(f['realized_pnl'])})\"\n            out.append(f\"| {f['date']} | {trade} | {money(f['price'], True)} | \"\n                       f\"[{esc(first_sentence(thesis)) or 'order'}]({f['path']}) |\")\n        out.append(\"\")\n\n    sells = [f for f in filled if f[\"side\"] == \"SELL\"]\n    wins = [f for f in sells if f.get(\"realized_pnl\", 0) > 0]\n    n_days, best = weekday_streaks(journal_days)\n    status = {s: sum(1 for f in fills if f[\"status\"] == s) for s in (\"FILLED\", \"CANCELLED\", \"REJECTED\")}\n    out += [\"## The work behind it\", \"\",\n            f\"- **{n_days}** days journaled · longest streak **{best}** weekdays in a row\",\n            f\"- **{len(order_files)}** orders written up with a thesis · {status['FILLED']} filled, \"\n            f\"{status['CANCELLED']} cancelled, {status['REJECTED']} rejected\",\n            f\"- **{len(research)}** research note{'' if len(research) == 1 else 's'}\",\n            ]\n    if sells:\n        out.append(f\"- Closed trades that made money: **{len(wins)} of {len(sells)}** ({pct(len(wins) / len(sells), False, 0)})\")\n    out.append(f\"- Realized P&L {money(state['realized_pnl'])} · dividends {money(state['dividends'])} · \"\n               f\"trading costs paid {money(state['costs'])}\")\n    out += [\"\", \"Everything is in the open: [journal/](journal/) · [research/](research/) · [orders/](orders/) · \"\n            \"[data/](data/)\", \"\"]\n\n    out += [\"## How to check this record\", \"\",\n            \"I built this so nobody has to take my word for any of it.\", \"\",\n            \"1. **GitHub timestamps everything, not my device.** Every order, journal entry and research note gets \"\n            \"a receipt in [`data/receipts.jsonl`](data/receipts.jsonl) with the time GitHub received the push and the \"\n            \"file's SHA-256 fingerprint. If a file changes later, it gets a new receipt, and the old one stays.\",\n            f\"2. **Orders fill at the official 4:00 PM ET close**, the first close after GitHub received them, with \"\n            f\"{cfg['slippage_bps']:g} bp of slippage and {cfg['commission_bps']:g} bp of commission. An order that \"\n            \"arrives at 4:01 PM waits for the next day's close. I can't pick my price or backdate a trade, \"\n            \"because a backdated file would just fill at whatever the next close is.\",\n            \"3. **A bot does all the math.** Fills, splits, dividends and the daily mark-to-market are done by \"\n            \"[`engine/engine.py`](engine/engine.py) in GitHub Actions. I never type in a price or a P&L number.\",\n            (\"4. **Each night's ledger is anchored to the Bitcoin blockchain** with \"\n             \"[OpenTimestamps](https://opentimestamps.org). Every file in [`proofs/`](proofs/) holds the hashes of the \"\n             \"whole ledger as of that close, chained to the night before. Run `ots verify proofs/<year>/<date>.txt.ots` \"\n             \"to confirm it existed on that date, so the history can't be rewritten after the fact.\"\n             if any(PROOFS.rglob(\"*.ots\")) else\n             \"4. **Each night's ledger is hashed and chained.** Every file in [`proofs/`](proofs/) holds the hashes of \"\n             \"the whole ledger as of that close plus the hash of the night before, so changing an old entry breaks \"\n             \"every digest after it.\"),\n            \"\",\n            f\"<sub>Paper trading, not real money. Long only, no leverage. Dividends are credited on the ex-date. \"\n            f\"Benchmark is {cfg['benchmark']} total return. Prices from Yahoo Finance.<\/sub>\", \"\"]\n    (ROOT / \"README.md\").write_text(\"\\n\".join(out))\n\n\ndef fmt_date(d):\n    x = dt.date.fromisoformat(d)\n    return x.strftime(\"%b %-d, %Y\")\n\n\ndef write_svg(nav, cfg):\n    path = DATA / \"performance.svg\"\n    if not nav:\n        return\n    W, H, L, R, T, B = 760, 300, 58, 18, 40, 34\n    p = [r[\"nav_index\"] for r in nav]\n    b = [r[\"bench_index\"] for r in nav]\n    lo, hi = min(p + b), max(p + b)\n    span = hi - lo or 1.0\n    lo, hi = lo - span * 0.12, hi + span * 0.12\n    n = len(nav)\n\n    def X(i):\n        return L + (W - L - R) * (i / (n - 1) if n > 1 else 0.5)\n\n    def Y(v):\n        return T + (H - T - B) * (1 - (v - lo) / (hi - lo))\n\n    def line(vals, color, width):\n        if n == 1:\n            return f'<circle cx=\"{X(0):.1f}\" cy=\"{Y(vals[0]):.1f}\" r=\"3.5\" fill=\"{color}\"/>'\n        pts = \" \".join(f\"{X(i):.1f},{Y(v):.1f}\" for i, v in enumerate(vals))\n        return (f'<polyline points=\"{pts}\" fill=\"none\" stroke=\"{color}\" stroke-width=\"{width}\" '\n                f'stroke-linejoin=\"round\" stroke-linecap=\"round\"/>')\n\n    grid = []\n    for k in range(5):\n        v = lo + (hi - lo) * k / 4\n        y = Y(v)\n        grid.append(f'<line x1=\"{L}\" x2=\"{W - R}\" y1=\"{y:.1f}\" y2=\"{y:.1f}\" stroke=\"#e7e4dc\"/>'\n                    f'<text x=\"{L - 8}\" y=\"{y + 4:.1f}\" text-anchor=\"end\">{(v / 100 - 1) * 100:+.1f}%<\/text>')\n    if lo < 100 < hi:\n        grid.append(f'<line x1=\"{L}\" x2=\"{W - R}\" y1=\"{Y(100):.1f}\" y2=\"{Y(100):.1f}\" stroke=\"#b9b4a8\" stroke-dasharray=\"3 4\"/>')\n    ink, grey = \"#14532d\", \"#9a968c\"\n    svg = f'''<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 {W} {H}\" width=\"{W}\" height=\"{H}\" font-family=\"-apple-system,Segoe UI,Helvetica,Arial,sans-serif\" font-size=\"12\" fill=\"#6b675e\">\n<rect width=\"{W}\" height=\"{H}\" fill=\"#fbfaf7\" rx=\"10\"/>\n{''.join(grid)}\n{line(b, grey, 1.6)}\n{line(p, ink, 2.4)}\n<circle cx=\"{L + 4}\" cy=\"20\" r=\"5\" fill=\"{ink}\"/><text x=\"{L + 14}\" y=\"24\" fill=\"#1d1b17\" font-weight=\"600\">Portfolio {pct(p[-1] / 100 - 1)}<\/text>\n<circle cx=\"{L + 190}\" cy=\"20\" r=\"5\" fill=\"{grey}\"/><text x=\"{L + 200}\" y=\"24\">{cfg['benchmark']} {pct(b[-1] / 100 - 1)}<\/text>\n<text x=\"{L}\" y=\"{H - 10}\">{fmt_date(nav[0]['date'])}<\/text>\n<text x=\"{W - R}\" y=\"{H - 10}\" text-anchor=\"end\">{fmt_date(nav[-1]['date'])}<\/text>\n<\/svg>\n'''\n    path.write_text(svg)\n\n\n# --------------------------------------------------------------------------- due\ndef cmd_due(now):\n    state = read_json(DATA / \"state.json\", {}) or {}\n    last = state.get(\"last_date\")\n    et = now.astimezone(ET)\n    d = et.date()\n    if et.time() < (dt.datetime.combine(d, CLOSE_TIME) + dt.timedelta(minutes=SETTLE_MINUTES)).time():\n        d -= dt.timedelta(days=1)\n    while d.weekday() >= 5:\n        d -= dt.timedelta(days=1)\n    due = last is None or last < d.isoformat()\n    print(f\"due={'true' if due else 'false'}\")\n\n\n# --------------------------------------------------------------------------- commit loop\ndef run_and_commit(message, fn):\n    \"\"\"Reset to the remote, run fn, commit only bot-owned paths, push; retry on races.\"\"\"\n    branch = os.environ.get(\"BRANCH\") or git(\"rev-parse\", \"--abbrev-ref\", \"HEAD\").strip()\n    for attempt in range(1, 7):\n        git(\"fetch\", \"-q\", \"origin\", branch)\n        git(\"reset\", \"-q\", \"--hard\", f\"origin/{branch}\")\n        git(\"clean\", \"-fdq\", \"--\", *BOT_PATHS, check=False)\n        fn()\n        paths = [p for p in BOT_PATHS if (ROOT / p).exists()]\n        git(\"add\", \"-A\", \"--\", *paths)\n        if not git(\"diff\", \"--cached\", \"--name-only\").strip():\n            log(\"nothing to commit\")\n            return\n        git(\"-c\", \"user.name=track-record-bot\",\n            \"-c\", \"user.email=41898282+github-actions[bot]@users.noreply.github.com\",\n            \"commit\", \"-q\", \"-m\", message)\n        r = subprocess.run([\"git\", \"push\", \"-q\", \"origin\", f\"HEAD:{branch}\"], cwd=ROOT, capture_output=True, text=True)\n        if r.returncode == 0:\n            log(f\"pushed: {message}\")\n            return\n        log(f\"push rejected (attempt {attempt}), retrying: {r.stderr.strip()}\")\n        time.sleep(attempt * 4)\n    raise SystemExit(\"could not push after several attempts\")\n\n\ndef main():\n    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)\n    sub = ap.add_subparsers(dest=\"cmd\", required=True)\n    s = sub.add_parser(\"stamp\")\n    s.add_argument(\"--ref\", default=\"HEAD\")\n    s.add_argument(\"--pushed-at\", default=\"\")\n    s.add_argument(\"--commit\", action=\"store_true\")\n    c = sub.add_parser(\"close\")\n    c.add_argument(\"--now\", default=\"\")\n    c.add_argument(\"--commit\", action=\"store_true\")\n    d = sub.add_parser(\"due\")\n    d.add_argument(\"--now\", default=\"\")\n    a = ap.parse_args()\n\n    now = parse_iso(a.now) if getattr(a, \"now\", \"\") else utcnow()\n    if a.cmd == \"due\":\n        return cmd_due(now)\n    if a.cmd == \"stamp\":\n        received = now\n        if a.pushed_at.strip().isdigit():\n            received = min(dt.datetime.fromtimestamp(int(a.pushed_at), UTC), now)\n        ref = a.ref\n\n        def job():\n            stamp(ref, received, \"push\", commit=git(\"rev-parse\", ref).strip())\n\n        if a.commit:\n            return run_and_commit(f\"Receipts for {ref[:7]}\", job)\n        return job()\n    if a.cmd == \"close\":\n        label = now.astimezone(ET).strftime(\"%b %-d\")\n        if a.commit:\n            return run_and_commit(f\"Close: mark to market ({label})\", lambda: cmd_close(now))\n        return cmd_close(now)\n\n\nif __name__ == \"__main__\":\n    main()\n", "engine/requirements.txt": "yfinance>=0.2.54\npandas\nopentimestamps-client>=0.7.1\n", ".github/workflows/receipts.yml": "name: Receipts\n# Logs the time GitHub received each push, plus a SHA-256 fingerprint, for every\n# new or changed order, cancel, journal entry and research note.\non:\n  push:\n    paths: ['orders/**', 'cancels/**', 'journal/**', 'research/**']\n\npermissions:\n  contents: write\n\nconcurrency:\n  group: receipts\n  cancel-in-progress: false\n\njobs:\n  stamp:\n    runs-on: ubuntu-latest\n    timeout-minutes: 5\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          ref: ${{ github.event.repository.default_branch }}\n          fetch-depth: 0\n      - name: Stamp with GitHub's push time\n        env:\n          BRANCH: ${{ github.event.repository.default_branch }}\n          PUSHED_AT: ${{ github.event.repository.pushed_at }}\n          EVENT_SHA: ${{ github.sha }}\n        run: python3 engine/engine.py stamp --ref \"$EVENT_SHA\" --pushed-at \"$PUSHED_AT\" --commit\n", ".github/workflows/close.yml": "name: Daily close\n# Fills pending orders at the official 4:00 PM ET close, applies splits and\n# dividends, marks the portfolio to market, rebuilds the README and anchors a\n# digest of the ledger with OpenTimestamps.\non:\n  schedule:\n    - cron: '35 21 * * 1-5'   # 4:35 PM EST / 5:35 PM EDT\n    - cron: '15 1 * * 2-6'    # backup run later the same evening\n  workflow_dispatch:\n\npermissions:\n  contents: write\n\nconcurrency:\n  group: close\n  cancel-in-progress: false\n\njobs:\n  close:\n    runs-on: ubuntu-latest\n    timeout-minutes: 20\n    steps:\n      - uses: actions/checkout@v4\n        with:\n          fetch-depth: 0\n      - name: Is there a new close to process?\n        id: due\n        run: python3 engine/engine.py due >> \"$GITHUB_OUTPUT\"\n      - uses: actions/setup-python@v5\n        if: steps.due.outputs.due == 'true'\n        with:\n          python-version: '3.12'\n          cache: pip\n          cache-dependency-path: engine/requirements.txt\n      - name: Install\n        if: steps.due.outputs.due == 'true'\n        run: pip install -r engine/requirements.txt\n      - name: Fill, mark and publish\n        if: steps.due.outputs.due == 'true'\n        run: python engine/engine.py close --commit\n"};
+const START_CASH = 10_000_000;
+const TABS = [
+  ["overview","Overview",'<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>'],
+  ["trade","Trade",'<path d="M7 4v16M7 4 3 8M7 4l4 4M17 20V4M17 20l-4-4M17 20l4-4"/>'],
+  ["journal","Journal",'<path d="M5 4h11l3 3v13H5z"/><path d="M9 10h6M9 14h6"/>'],
+  ["record","Record",'<path d="M4 5h16v15H4zM4 10h16M9 5V3M15 5V3"/>'],
+  ["settings","Settings",'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>'],
+];
+
+/* ------------------------------------------------------------------ storage */
+const LS = {
+  get(k, d){ try{ const v = localStorage.getItem("pdesk." + k); return v == null ? d : JSON.parse(v); }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem("pdesk." + k, JSON.stringify(v)); }catch{} },
+  del(k){ try{ localStorage.removeItem("pdesk." + k); }catch{} },
+};
+
+/* ------------------------------------------------------------------ state */
+const S = {
+  conn: LS.get("conn", null),         // {owner, repo, token}
+  repo: null, branch: "main", shaOf: new Map(), paths: [],
+  setupNeeded: false, loading: false, error: null, loadedAt: null,
+  cfg: null, state: null, nav: [], fills: [], pending: [], cancels: new Set(),
+  journal: [], research: [], orderPaths: [], runs: null, engineStale: null,
+  tab: "overview", range: "all",
+  ticket: { side: "BUY", size: "notional", conv: 3 },
+  editing: null, orderCache: {},
+};
+Object.assign(S, LS.get("cache", {}));
+S.cancels = new Set(S.cancels || []);
+S.shaOf = new Map(S.shaOf || []);
+
+function saveCache(){
+  LS.set("cache", { cfg:S.cfg, state:S.state, nav:S.nav, fills:S.fills.slice(-400), pending:S.pending,
+    cancels:[...S.cancels], journal:S.journal, research:S.research, orderPaths:S.orderPaths,
+    branch:S.branch, loadedAt:S.loadedAt, setupNeeded:S.setupNeeded, repo:S.repo && {html_url:S.repo.html_url, private:S.repo.private, full_name:S.repo.full_name} });
+}
+
+/* ------------------------------------------------------------------ utils */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fmt0 = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+const fmt2 = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const money = (x, cents) => (x < 0 ? "-$" : "$") + (cents ? fmt2 : fmt0).format(Math.abs(x));
+const signedMoney = x => (x >= 0 ? "+" : "-") + "$" + fmt0.format(Math.abs(x));
+const pct = (x, d = 2, sign = true) => x == null || !isFinite(x) ? "—" : (sign && x >= 0 ? "+" : "") + (x * 100).toFixed(d) + "%";
+const cls = x => x > 0 ? "up" : x < 0 ? "down" : "";
+const stem = p => p.split("/").pop().replace(/\.[^.]+$/, "");
+const tz = "America/New_York";
+
+function etParts(d){
+  const f = new Intl.DateTimeFormat("en-US", { timeZone: tz, year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", second:"2-digit", hourCycle:"h23", weekday:"short" });
+  const o = {}; for (const p of f.formatToParts(d)) o[p.type] = p.value;
+  return { y:o.year, m:o.month, d:o.day, h:+o.hour, min:+o.minute, s:+o.second, wd:o.weekday, date:`${o.year}-${o.month}-${o.day}` };
+}
+const todayET = () => etParts(new Date()).date;
+function fmtDate(iso, opts = { month:"short", day:"numeric" }){
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d, 12)).toLocaleDateString("en-US", { timeZone:"UTC", ...opts });
+}
+function fmtTime(isoTs){
+  return new Date(isoTs).toLocaleString("en-US", { timeZone: tz, month:"short", day:"numeric", hour:"numeric", minute:"2-digit" }) + " ET";
+}
+function addDays(iso, n){ const [y,m,d] = iso.split("-").map(Number); const t = new Date(Date.UTC(y, m-1, d + n)); return t.toISOString().slice(0,10); }
+function weekday(iso){ const [y,m,d] = iso.split("-").map(Number); return new Date(Date.UTC(y, m-1, d)).getUTCDay(); }
+function nextWeekday(iso){ let x = addDays(iso, 1); while ([0,6].includes(weekday(x))) x = addDays(x, 1); return x; }
+function fillDateFor(receivedIso){
+  const p = etParts(receivedIso ? new Date(receivedIso) : new Date());
+  if (![0,6].includes(weekday(p.date)) && p.h < 16) return p.date;
+  return nextWeekday(p.date);
+}
+function parseAmount(s){
+  s = String(s || "").trim().toLowerCase().replace(/[$,\s]/g, "");
+  const m = s.match(/^(\d*\.?\d+)([km]?)%?$/); if (!m) return NaN;
+  return parseFloat(m[1]) * (m[2] === "k" ? 1e3 : m[2] === "m" ? 1e6 : 1);
+}
+function b64(str){
+  const bytes = new TextEncoder().encode(str); let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+async function gitBlobSha(text){
+  if (!crypto?.subtle) return null;
+  const body = new TextEncoder().encode(text), head = new TextEncoder().encode(`blob ${body.length}\0`);
+  const all = new Uint8Array(head.length + body.length); all.set(head); all.set(body, head.length);
+  const h = await crypto.subtle.digest("SHA-1", all);
+  return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function rand(n){ const a = "abcdefghjkmnpqrstuvwxyz23456789"; let s = ""; const r = crypto.getRandomValues(new Uint8Array(n)); for (const x of r) s += a[x % a.length]; return s; }
+function toast(msg, ms = 2600){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), ms); }
+function words(s){ return (String(s).match(/\S+/g) || []).length; }
+
+function mdToHtml(src){
+  const lines = String(src || "").replace(/\r/g, "").split("\n");
+  const inline = s => esc(s)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[\s(])[*_]([^*_]+)[*_](?=[\s).,!?:;]|$)/g, "$1<em>$2</em>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  let out = "", list = null, para = [];
+  const flush = () => { if (para.length){ out += `<p>${inline(para.join(" "))}</p>`; para = []; } if (list){ out += `</${list}>`; list = null; } };
+  for (const raw of lines){
+    const l = raw.trimEnd(); let m;
+    if (!l.trim()){ flush(); continue; }
+    if ((m = l.match(/^(#{1,3})\s+(.*)$/))){ flush(); out += `<h${m[1].length}>${inline(m[2])}</h${m[1].length}>`; continue; }
+    if ((m = l.match(/^\s*[-*]\s+(.*)$/))){ if (para.length){ out += `<p>${inline(para.join(" "))}</p>`; para = []; } if (list !== "ul"){ if (list) out += `</${list}>`; out += "<ul>"; list = "ul"; } out += `<li>${inline(m[1])}</li>`; continue; }
+    if ((m = l.match(/^\s*\d+[.)]\s+(.*)$/))){ if (para.length){ out += `<p>${inline(para.join(" "))}</p>`; para = []; } if (list !== "ol"){ if (list) out += `</${list}>`; out += "<ol>"; list = "ol"; } out += `<li>${inline(m[1])}</li>`; continue; }
+    if (list){ out += `</${list}>`; list = null; }
+    para.push(l.trim());
+  }
+  flush();
+  return out || '<p class="muted">Empty.</p>';
+}
+
+/* ------------------------------------------------------------------ GitHub */
+class GHError extends Error { constructor(msg, status){ super(msg); this.status = status; } }
+const GH = {
+  base(){ return `/repos/${encodeURIComponent(S.conn.owner)}/${encodeURIComponent(S.conn.repo)}`; },
+  enc(p){ return p.split("/").map(encodeURIComponent).join("/"); },
+  async req(path, { method = "GET", body, raw = false } = {}){
+    let res;
+    try{
+      res = await fetch("https://api.github.com" + path, {
+        method, cache: "no-store",
+        headers: { "Authorization": "Bearer " + S.conn.token,
+          "Accept": raw ? "application/vnd.github.raw+json" : "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28", ...(body ? { "Content-Type": "application/json" } : {}) },
+        body: body ? JSON.stringify(body) : undefined });
+    }catch(e){ throw new GHError("Can't reach GitHub. Check your connection.", 0); }
+    if (!res.ok){
+      let msg = ""; try{ msg = (await res.json()).message || ""; }catch{}
+      throw new GHError(msg || res.statusText, res.status);
+    }
+    if (res.status === 204) return null;
+    return raw ? res.text() : res.json();
+  },
+  async raw(path){
+    try{ return await this.req(`${this.base()}/contents/${this.enc(path)}?ref=${encodeURIComponent(S.branch)}`, { raw: true }); }
+    catch(e){ if (e.status === 404) return null; throw e; }
+  },
+  async put(path, text, message){
+    const body = { message, content: b64(text), branch: S.branch };
+    const sha = S.shaOf.get(path); if (sha) body.sha = sha;
+    let r;
+    try{ r = await this.req(`${this.base()}/contents/${this.enc(path)}`, { method: "PUT", body }); }
+    catch(e){
+      if (e.status === 409 || e.status === 422){   // our copy of the file is stale: get the current sha and retry once
+        const meta = await this.req(`${this.base()}/contents/${this.enc(path)}?ref=${encodeURIComponent(S.branch)}`).catch(() => null);
+        if (meta?.sha) body.sha = meta.sha; else delete body.sha;
+        r = await this.req(`${this.base()}/contents/${this.enc(path)}`, { method: "PUT", body });
+      } else throw e;
+    }
+    S.shaOf.set(path, r.content.sha);
+    if (!S.paths.includes(path)) S.paths.push(path);
+    return r;
+  },
+};
+function explain(e){
+  if (!e) return "";
+  if (e.status === 401) return "GitHub rejected the token. It may have expired. Paste a new one in Settings.";
+  if (e.status === 403 && /workflow/i.test(e.message)) return "The token needs “Workflows: Read and write” to set up the daily jobs.";
+  if (e.status === 403) return "The token doesn't have permission for that. Check its repository access and that Contents is “Read and write”.";
+  if (e.status === 404) return "Can't see that repo. Check the owner and repo name, and that the token has access to it.";
+  return e.message || String(e);
+}
+
+/* ------------------------------------------------------------------ data */
+function parseNav(text){
+  if (!text) return [];
+  const [head, ...lines] = text.trim().split("\n"); const h = head.split(",");
+  return lines.filter(Boolean).map(l => { const v = l.split(","); const o = {}; h.forEach((k, i) => o[k] = k === "date" ? v[i] : +v[i]); return o; });
+}
+const parseJsonl = t => (t || "").split("\n").filter(l => l.trim()).map(l => { try{ return JSON.parse(l); }catch{ return null; } }).filter(Boolean);
+
+async function load(quiet){
+  if (!S.conn?.token){ S.setupNeeded = false; render(); return; }
+  if (S.loading) return;
+  S.loading = true; S.error = null; renderHeader();
+  try{
+    const repo = await GH.req(GH.base());
+    S.repo = repo; S.branch = repo.default_branch || "main";
+    let tree = { tree: [] };
+    try{ tree = await GH.req(`${GH.base()}/git/trees/${encodeURIComponent(S.branch)}?recursive=1`); }
+    catch(e){ if (![404, 409].includes(e.status)) throw e; }
+    S.shaOf = new Map(tree.tree.filter(x => x.type === "blob").map(x => [x.path, x.sha]));
+    S.paths = [...S.shaOf.keys()];
+    S.setupNeeded = !S.shaOf.has("config.json");
+    if (!S.setupNeeded){
+      const want = ["config.json", "data/state.json", "data/nav.csv", "data/fills.jsonl", "data/receipts.jsonl"];
+      const [cfg, state, nav, fills, receipts] = await Promise.all(want.map(p => S.shaOf.has(p) ? GH.raw(p) : null));
+      S.cfg = JSON.parse(cfg);
+      S.state = state ? JSON.parse(state) : null;
+      S.nav = parseNav(nav);
+      S.fills = parseJsonl(fills);
+      const rec = new Map();
+      for (const r of parseJsonl(receipts)) { const k = r.path + "@" + r.blob; if (!rec.has(k) || r.received_at < rec.get(k)) rec.set(k, r.received_at); }
+      const done = new Set(S.fills.map(f => f.order_id));
+      S.orderPaths = S.paths.filter(p => p.startsWith("orders/") && p.endsWith(".json")).sort();
+      const pend = S.orderPaths.filter(p => !done.has(stem(p))).slice(-40);
+      S.pending = (await Promise.all(pend.map(async p => {
+        try{ const o = JSON.parse(await GH.raw(p)); o.id = stem(p); o._path = p; o._received_at = rec.get(p + "@" + S.shaOf.get(p)) || null; S.orderCache[o.id] = o; return o; }
+        catch{ return null; }
+      }))).filter(Boolean).sort((a, b) => a.id < b.id ? 1 : -1);
+      S.cancels = new Set(S.paths.filter(p => p.startsWith("cancels/")).map(stem));
+      S.journal = S.paths.map(p => p.match(/^journal\/.*?(\d{4}-\d{2}-\d{2})\.md$/)).filter(Boolean)
+        .map(m => ({ date: m[1], path: m[0] })).sort((a, b) => a.date < b.date ? 1 : -1);
+      S.research = S.paths.filter(p => p.startsWith("research/") && p.endsWith(".md"))
+        .map(p => { const n = stem(p); const m = n.match(/^(\d{4}-\d{2}-\d{2})-?(.*)$/); return { path: p, date: m ? m[1] : "", title: (m ? m[2] : n).replace(/-/g, " ") || "Note" }; })
+        .sort((a, b) => a.path < b.path ? 1 : -1);
+      checkEngine();
+      GH.req(`${GH.base()}/actions/runs?per_page=12`).then(r => { S.runs = r.workflow_runs || []; renderRecord(); renderSettings(); }).catch(() => { S.runs = null; });
+    }
+    S.loadedAt = new Date().toISOString();
+    saveCache();
+  }catch(e){
+    S.error = e;
+    if (!quiet) toast(explain(e), 4200);
+  }finally{
+    S.loading = false; render();
+  }
+}
+
+async function checkEngine(){
+  S.engineStale = null;
+  const stale = [];
+  for (const [path, text] of Object.entries(REPO_FILES)){
+    const sha = await gitBlobSha(text);
+    if (sha && S.shaOf.get(path) !== sha) stale.push(path);
+  }
+  S.engineStale = stale;
+  renderSettings();
+}
+
+/* ------------------------------------------------------------------ derived */
+function book(){
+  const st = S.state, cfg = S.cfg || {};
+  const start = cfg.starting_cash || START_CASH;
+  const last = S.nav[S.nav.length - 1];
+  const nav = last ? last.nav : start;
+  const positions = Object.entries(st?.positions || {}).map(([t, p]) => {
+    const value = p.shares * (p.last_price || 0);
+    return { t, ...p, value, pnl: value - p.cost, pnlPct: p.cost ? (value - p.cost) / p.cost : 0, weight: nav ? value / nav : 0 };
+  }).sort((a, b) => b.value - a.value);
+  const prev = S.nav[S.nav.length - 2];
+  return {
+    start, nav, cash: st ? st.cash : start, positions, last,
+    ret: last ? last.nav_index / 100 - 1 : 0,
+    bench: last ? last.bench_index / 100 - 1 : 0,
+    day: last && prev ? { abs: last.nav - prev.nav, pct: last.daily_return } : null,
+    mdd: maxDD(S.nav.map(r => r.nav_index)),
+  };
+}
+function maxDD(arr){ let peak = -Infinity, m = 0; for (const v of arr){ peak = Math.max(peak, v); m = Math.min(m, v / peak - 1); } return m; }
+function pendingBuysEstimate(){
+  let total = 0;
+  for (const o of S.pending){
+    if (S.cancels.has(o.id) || String(o.side).toUpperCase() !== "BUY") continue;
+    const z = o.sizing || {};
+    if (z.type === "notional") total += +z.value || 0;
+    else if (z.type === "shares"){ const px = lastPrice(o.ticker); if (px) total += px * z.value; }
+  }
+  return total;
+}
+function lastPrice(t){
+  t = String(t || "").toUpperCase().replace(".", "-");
+  const p = S.state?.positions?.[t]; if (p?.last_price) return p.last_price;
+  if (S.cfg && t === S.cfg.benchmark && S.nav.length) return S.nav[S.nav.length - 1].bench_close;
+  const f = [...S.fills].reverse().find(f => f.ticker === t && f.close); return f ? f.close : null;
+}
+function activeDays(){
+  const m = new Map();
+  const bump = (d, n) => m.set(d, (m.get(d) || 0) + n);
+  for (const j of S.journal) bump(j.date, 1);
+  for (const p of S.orderPaths){ const x = stem(p).match(/^(\d{4})(\d{2})(\d{2})/); if (x) bump(`${x[1]}-${x[2]}-${x[3]}`, 1); }
+  for (const r of S.research) if (r.date) bump(r.date, 1);
+  return m;
+}
+function streaks(){
+  const days = new Set(S.journal.map(j => j.date));
+  let d = todayET(); while ([0,6].includes(weekday(d))) d = addDays(d, -1);
+  if (!days.has(d)){ d = addDays(d, -1); while ([0,6].includes(weekday(d))) d = addDays(d, -1); }
+  let cur = 0; while (days.has(d)){ cur++; d = addDays(d, -1); while ([0,6].includes(weekday(d))) d = addDays(d, -1); }
+  const sorted = [...days].filter(x => ![0,6].includes(weekday(x))).sort();
+  let best = 0, run = 0, prev = null;
+  for (const x of sorted){ run = prev && nextWeekday(prev) === x ? run + 1 : 1; best = Math.max(best, run); prev = x; }
+  return { cur, best, total: days.size, today: days.has(todayET()) };
+}
+
+/* ------------------------------------------------------------------ routing + shell */
+function route(tab){
+  if (!TABS.some(t => t[0] === tab)) tab = "overview";
+  S.tab = tab;
+  if (location.hash.slice(1) !== tab) history.replaceState(null, "", "#" + tab);
+  document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.id === "view-" + tab));
+  document.querySelectorAll("[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  window.scrollTo({ top: 0 });
+  if (tab === "overview") drawChart();
+}
+function buildTabs(){
+  const icon = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+  $("#tabs").innerHTML = TABS.map(([k, l, p]) => `<button data-tab="${k}">${icon(p)}<span>${l}</span></button>`).join("");
+  $("#deskTabs").innerHTML = TABS.map(([k, l]) => `<button data-tab="${k}">${l}</button>`).join("");
+  document.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => route(b.dataset.tab));
+}
+function render(){ renderHeader(); renderOverview(); renderTrade(); renderJournal(); renderRecord(); renderSettings(); }
+function renderHeader(){
+  $("#fundName").textContent = S.cfg?.fund_name || "Portfolio Desk";
+  document.title = S.cfg?.fund_name || "Portfolio Desk";
+  const dot = $("#syncDot");
+  dot.className = "dot " + (S.loading ? "busy" : S.error ? "err" : S.loadedAt ? "ok" : "");
+  let txt = "Not connected";
+  if (S.conn?.token){
+    if (S.loading) txt = "Syncing with GitHub…";
+    else if (S.error) txt = "Sync failed · tap ↻";
+    else if (S.setupNeeded) txt = "Repo not set up yet";
+    else { const last = S.nav[S.nav.length - 1]; txt = last ? `Marked at the ${fmtDate(last.date)} close` : "Waiting for the first close"; }
+  }
+  $("#asOf").textContent = txt;
+}
+
+function sheet(html, onMount){
+  closeSheet();
+  const s = document.createElement("div"); s.className = "scrim"; s.id = "scrim";
+  s.innerHTML = `<div class="sheet" role="dialog"><div class="grab"></div>${html}</div>`;
+  s.addEventListener("click", e => { if (e.target === s) closeSheet(); });
+  document.body.appendChild(s); document.body.style.overflow = "hidden";
+  s.querySelectorAll("[data-close]").forEach(b => b.onclick = closeSheet);
+  onMount && onMount(s);
+}
+function closeSheet(){ $("#scrim")?.remove(); document.body.style.overflow = ""; }
+
+/* ------------------------------------------------------------------ overview */
+function connectBanner(){
+  if (!S.conn?.token) return `<div class="card"><h2>Connect your repo</h2><p class="muted">Everything you do here is saved to your private GitHub repo. Go to Settings to connect it. Takes about five minutes the first time.</p><button class="btn primary" onclick="route('settings')">Open Settings</button></div>`;
+  if (S.setupNeeded) return `<div class="banner">Your repo is connected but not set up yet. <br><button class="btn" onclick="route('settings')">Finish setup</button></div>`;
+  if (S.error && !S.cfg) return `<div class="banner bad">${esc(explain(S.error))}</div>`;
+  return "";
+}
+function renderOverview(){
+  const el = $("#view-overview");
+  const ban = connectBanner();
+  if (!S.cfg){ el.innerHTML = ban; return; }
+  const b = book();
+  const excess = b.ret - b.bench;
+  const st = streaks();
+  el.innerHTML = `${ban}
+  <div class="two-col"><div>
+    <div class="hero">
+      <div class="label">Net asset value</div>
+      <div class="nav">${money(b.nav)}</div>
+      <div class="lines">
+        <span class="${cls(b.ret)}"><b>${pct(b.ret)}</b> since ${fmtDate(S.cfg.inception)}</span>
+        <span class="muted">${esc(S.cfg.benchmark)} ${pct(b.bench)}</span>
+        ${b.day ? `<span class="${cls(b.day.abs)}">${signedMoney(b.day.abs)} (${pct(b.day.pct)}) last day</span>` : ""}
+      </div>
+      ${!b.last ? `<p class="muted small" style="margin-top:10px">No closes yet. The first mark happens after the next 4:00 PM ET close.</p>` : ""}
+    </div>
+    <div class="card chart-card">
+      <div class="chart-head">
+        <div class="legend"><span><i style="background:var(--accent)"></i>Portfolio</span><span><i style="background:var(--bench)"></i>${esc(S.cfg.benchmark)}</span></div>
+        <div class="chips" id="rangeChips">${["1m","3m","ytd","all"].map(r => `<button data-r="${r}" class="${S.range === r ? "on" : ""}">${r.toUpperCase()}</button>`).join("")}</div>
+      </div>
+      <div id="chartBox"></div>
+      <div class="scrub" id="scrub"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">Cash</div><div class="v">${pct(b.cash / b.nav, 1, false)}</div></div>
+      <div class="stat"><div class="k">Vs ${esc(S.cfg.benchmark)}</div><div class="v ${cls(excess)}">${pct(excess)}</div></div>
+      <div class="stat"><div class="k">Max drawdown</div><div class="v">${pct(b.mdd, 2, false)}</div></div>
+      <div class="stat"><div class="k">Journal streak</div><div class="v">${st.cur} day${st.cur === 1 ? "" : "s"}</div></div>
+    </div>
+  </div><div>
+    <h2>Positions <span class="faint small">${b.positions.length ? `· ${money(b.cash)} cash` : ""}</span></h2>
+    <div class="list">${b.positions.length ? b.positions.map(p => `
+      <button class="row" data-pos="${esc(p.t)}">
+        <span class="tick">${esc(p.t)}</span>
+        <span class="main"><div class="t">${money(p.value)}</div><div class="s">${fmt0.format(p.shares)} sh · ${pct(p.weight, 1, false)} of NAV</div></span>
+        <span class="r ${cls(p.pnl)}"><div>${signedMoney(p.pnl)}</div><div class="small">${pct(p.pnlPct)}</div></span>
+      </button>`).join("") : `<div class="empty">All cash. Place your first trade on the Trade tab.</div>`}
+    </div>
+    ${pendingHtml()}
+  </div></div>`;
+  drawChart();
+  el.querySelectorAll("#rangeChips button").forEach(x => x.onclick = () => { S.range = x.dataset.r; renderOverview(); });
+  el.querySelectorAll("[data-pos]").forEach(x => x.onclick = () => positionSheet(x.dataset.pos));
+  el.querySelectorAll("[data-cancel]").forEach(x => x.onclick = () => cancelSheet(x.dataset.cancel));
+  el.querySelectorAll("[data-order]").forEach(x => x.onclick = () => orderSheet(x.dataset.order));
+}
+function sizingText(o){
+  const z = o.sizing || {};
+  if (z.type === "all") return "all shares";
+  if (z.type === "shares") return `${fmt0.format(z.value)} shares`;
+  if (z.type === "notional") return money(+z.value) + (z.pct_nav ? ` (${z.pct_nav}% of NAV)` : "");
+  return "?";
+}
+function pendingHtml(){
+  if (!S.pending.length) return "";
+  return `<h2>Waiting to fill</h2><div class="list">${S.pending.map(o => {
+    const side = String(o.side).toUpperCase(), cancelled = S.cancels.has(o.id);
+    const fd = fillDateFor(o._received_at);
+    const past = fd < todayET() || (fd === todayET() && etParts(new Date()).h >= 16);
+    const when = cancelled ? "Cancel requested" : past ? `Filling at the ${fmtDate(fd)} close (bot runs ~4:35 PM ET)` : fd === todayET() ? "Fills at today's 4:00 PM ET close" : `Fills at the ${fmtDate(fd)} close`;
+    const rec = o._received_at ? `<span class="pill good">✓ GitHub received ${fmtTime(o._received_at)}</span>` : `<span class="pill warn">Waiting for GitHub receipt…</span>`;
+    return `<div class="row" style="cursor:default;flex-wrap:wrap">
+      <span class="tick" style="color:${side === "BUY" ? "var(--green)" : "var(--red)"}">${side}</span>
+      <span class="main"><div class="t">${esc(o.ticker)} · ${esc(sizingText(o))}</div><div class="s">${esc(when)}</div></span>
+      <span class="r">${cancelled ? "" : `<button class="btn small" data-cancel="${esc(o.id)}">Cancel</button>`}</span>
+      <div style="flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center">${rec}<a href="javascript:void 0" class="small" data-order="${esc(o.id)}">Thesis</a></div>
+    </div>`; }).join("")}</div>`;
+}
+
+function drawChart(){
+  const box = $("#chartBox"); if (!box) return;
+  let rows = S.nav;
+  if (!rows.length){ box.innerHTML = `<div class="empty">The chart starts after your first close.</div>`; return; }
+  const lastD = rows[rows.length - 1].date;
+  const cut = S.range === "1m" ? addDays(lastD, -31) : S.range === "3m" ? addDays(lastD, -92) : S.range === "ytd" ? lastD.slice(0, 4) + "-01-01" : "";
+  let vis = rows.filter(r => r.date >= cut); if (vis.length < 2 && rows.length >= 2) vis = rows.slice(-2); if (!vis.length) vis = rows;
+  const p0 = vis[0].nav_index, b0 = vis[0].bench_index;
+  const P = vis.map(r => r.nav_index / p0 - 1), B = vis.map(r => r.bench_index / b0 - 1);
+  const W = Math.max(300, Math.round(box.clientWidth || 640)), H = Math.round(Math.min(260, Math.max(190, W * 0.5))), L = 40, R = 8, T = 12, Bm = 24;
+  let lo = Math.min(...P, ...B, 0), hi = Math.max(...P, ...B, 0); const span = (hi - lo) || 0.01; lo -= span * .1; hi += span * .1;
+  const n = vis.length, X = i => L + (W - L - R) * (n > 1 ? i / (n - 1) : .5), Y = v => T + (H - T - Bm) * (1 - (v - lo) / (hi - lo));
+  const path = a => a.map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("");
+  let grid = "";
+  for (let k = 0; k <= 4; k++){ const v = lo + (hi - lo) * k / 4; grid += `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${(Math.abs(v) < 1e-9 ? 0 : v * 100).toFixed(Math.abs(hi - lo) < .12 ? 1 : 0).replace(/^-0(\.0)?$/, "0")}%</text>`; }
+  const area = n > 1 ? `${path(P)}L${X(n - 1)},${Y(lo)}L${X(0)},${Y(lo)}Z` : "";
+  box.innerHTML = `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Portfolio versus benchmark">
+    <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".16"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+    ${grid}<line x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--faint)" stroke-dasharray="3 4"/>
+    ${area ? `<path d="${area}" fill="url(#g)"/>` : ""}
+    ${n > 1 ? `<path d="${path(B)}" fill="none" stroke="var(--bench)" stroke-width="1.6" stroke-linejoin="round"/><path d="${path(P)}" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>`
+      : `<circle cx="${X(0)}" cy="${Y(P[0])}" r="4" fill="var(--accent)"/>`}
+    <text x="${L}" y="${H - 6}">${fmtDate(vis[0].date)}</text><text x="${W - R}" y="${H - 6}" text-anchor="end">${fmtDate(vis[n - 1].date)}</text>
+    <g id="cross" style="display:none"><line id="cx" y1="${T}" y2="${H - Bm}" stroke="var(--muted)" stroke-width="1"/><circle id="cp" r="4" fill="var(--accent)"/><circle id="cb" r="3.5" fill="var(--bench)"/></g>
+    <rect x="${L}" y="0" width="${W - L - R}" height="${H}" fill="transparent" id="hit"/>
+  </svg>`;
+  const svg = box.querySelector("svg"), cross = svg.querySelector("#cross"), scrub = $("#scrub");
+  const label = i => `${fmtDate(vis[i].date, { month:"short", day:"numeric", year:"numeric" })} · Portfolio <b class="${cls(P[i])}">${pct(P[i])}</b> · ${esc(S.cfg.benchmark)} ${pct(B[i])}`;
+  scrub.innerHTML = label(n - 1);
+  const move = e => {
+    const r = svg.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round((x - L) / (W - L - R) * (n - 1))));
+    cross.style.display = ""; svg.querySelector("#cx").setAttribute("x1", X(i)); svg.querySelector("#cx").setAttribute("x2", X(i));
+    svg.querySelector("#cp").setAttribute("cx", X(i)); svg.querySelector("#cp").setAttribute("cy", Y(P[i]));
+    svg.querySelector("#cb").setAttribute("cx", X(i)); svg.querySelector("#cb").setAttribute("cy", Y(B[i]));
+    scrub.innerHTML = label(i);
+  };
+  svg.querySelector("#hit").addEventListener("pointermove", move);
+  svg.querySelector("#hit").addEventListener("pointerdown", move);
+  svg.addEventListener("pointerleave", () => { cross.style.display = "none"; scrub.innerHTML = label(n - 1); });
+}
+
+async function getOrder(id){
+  if (S.orderCache[id]) return S.orderCache[id];
+  const path = S.orderPaths.find(p => stem(p) === id) || S.fills.find(f => f.order_id === id)?.path;
+  if (!path) return null;
+  const t = await GH.raw(path); if (!t) return null;
+  const o = JSON.parse(t); o.id = id; o._path = path; S.orderCache[id] = o; return o;
+}
+function thesisBlock(o){
+  if (!o) return `<p class="muted">Couldn't load the order file.</p>`;
+  const side = String(o.side).toUpperCase();
+  return `<div class="small muted">${side === "SELL" ? "Why I sold" : "Thesis"}</div><div class="quote">${esc(o.thesis || "—")}</div>
+    ${o.invalidation ? `<div class="small muted">What would prove me wrong</div><div class="quote">${esc(o.invalidation)}</div>` : ""}
+    <dl class="kv">
+      ${o.target_price ? `<dt>Target</dt><dd>${money(+o.target_price, true)}</dd>` : ""}
+      ${o.stop_price ? `<dt>Exit / stop</dt><dd>${money(+o.stop_price, true)}</dd>` : ""}
+      ${o.horizon ? `<dt>Horizon</dt><dd>${esc(o.horizon)}</dd>` : ""}
+      ${o.conviction ? `<dt>Conviction</dt><dd>${"●".repeat(o.conviction)}${"○".repeat(5 - o.conviction)}</dd>` : ""}
+      <dt>Size</dt><dd>${esc(sizingText(o))}</dd>
+    </dl>`;
+}
+async function orderSheet(id){
+  sheet(`<h3>Order</h3><p class="muted">Loading…</p>`);
+  try{
+    const o = await getOrder(id); const f = S.fills.find(x => x.order_id === id);
+    const status = f ? f.status : S.cancels.has(id) ? "CANCEL REQUESTED" : "PENDING";
+    sheet(`<h3>${esc(String(o?.side || f?.side || "").toUpperCase())} ${esc(o?.ticker || f?.ticker || "")}</h3>
+      <div class="btn-row" style="margin:6px 0 10px"><span class="pill ${status === "FILLED" ? "good" : status === "REJECTED" ? "bad" : "warn"}">${esc(status)}</span>
+      ${f?.received_at || o?._received_at ? `<span class="pill">GitHub received ${fmtTime(f?.received_at || o._received_at)}</span>` : ""}</div>
+      ${f && f.status === "FILLED" ? `<dl class="kv"><dt>Filled at the ${fmtDate(f.date, { month:"short", day:"numeric", year:"numeric" })} close</dt><dd>${fmt0.format(f.shares)} @ ${money(f.price, true)}</dd>
+        <dt>Official close</dt><dd>${money(f.close, true)}</dd><dt>Value</dt><dd>${money(f.notional)}</dd><dt>Commission + slippage</dt><dd>${money(f.commission + f.slippage, true)}</dd>
+        ${f.realized_pnl != null ? `<dt>Realized P&L</dt><dd class="${cls(f.realized_pnl)}">${signedMoney(f.realized_pnl)}</dd>` : ""}</dl>` : ""}
+      ${f && f.reason ? `<p class="${f.status === "REJECTED" ? "down" : "muted"}">${esc(f.reason)}</p>` : ""}
+      ${thesisBlock(o)}
+      <p class="tiny faint">File: ${esc(o?._path || f?.path || "")}</p>
+      <button class="btn wide" data-close>Close</button>`);
+  }catch(e){ sheet(`<h3>Order</h3><p class="down">${esc(explain(e))}</p><button class="btn wide" data-close>Close</button>`); }
+}
+async function positionSheet(t){
+  const p = book().positions.find(x => x.t === t); if (!p) return;
+  const buys = S.fills.filter(f => f.ticker === t && f.status === "FILLED").slice(-4).reverse();
+  sheet(`<h3>${esc(t)}</h3>
+    <dl class="kv"><dt>Shares</dt><dd>${fmt0.format(p.shares)}</dd><dt>Avg cost</dt><dd>${money(p.cost / p.shares, true)}</dd>
+    <dt>Last close</dt><dd>${money(p.last_price, true)}</dd><dt>Market value</dt><dd>${money(p.value)}</dd><dt>Weight</dt><dd>${pct(p.weight, 1, false)}</dd>
+    <dt>Unrealized P&L</dt><dd class="${cls(p.pnl)}">${signedMoney(p.pnl)} (${pct(p.pnlPct)})</dd></dl>
+    <div class="btn-row" style="margin:12px 0 4px"><button class="btn" id="psAdd">Buy more</button><button class="btn danger" id="psSell">Sell</button></div>
+    <h2 style="font-size:17px">Trade history</h2>
+    <div id="psHist">${buys.map(f => `<div class="card" style="margin-top:8px"><div class="small"><b>${f.side === "BUY" ? "Bought" : "Sold"} ${fmt0.format(f.shares)}</b> @ ${money(f.price, true)} · ${fmtDate(f.date)}</div><div class="small muted" data-th="${esc(f.order_id)}">Loading thesis…</div></div>`).join("")}</div>
+    <button class="btn wide" data-close>Close</button>`, async s => {
+      s.querySelector("#psAdd").onclick = () => { closeSheet(); prefillTicket(t, "BUY"); };
+      s.querySelector("#psSell").onclick = () => { closeSheet(); prefillTicket(t, "SELL"); };
+      for (const el of s.querySelectorAll("[data-th]")){
+        try{ const o = await getOrder(el.dataset.th); el.textContent = o?.thesis || "—"; }catch{ el.textContent = "Couldn't load."; }
+      }
+    });
+}
+function cancelSheet(id){
+  const o = S.pending.find(x => x.id === id); if (!o) return;
+  sheet(`<h3>Cancel this order?</h3><p class="muted">${esc(String(o.side).toUpperCase())} ${esc(o.ticker)} · ${esc(sizingText(o))}</p>
+    <p class="small muted">The cancel gets its own GitHub timestamp. It only works if GitHub receives it before the 4:00 PM ET close the order is waiting for.</p>
+    <label class="f">Reason (optional, it stays on the record)</label><input class="in" id="cReason" placeholder="e.g. Earnings date moved">
+    <button class="btn wide primary" id="cGo">Cancel order</button><button class="btn wide" data-close style="margin-top:8px">Keep it</button>`, s => {
+    s.querySelector("#cGo").onclick = async () => {
+      const btn = s.querySelector("#cGo"); btn.disabled = true; btn.textContent = "Sending…";
+      try{
+        await GH.put(`cancels/${id}.json`, JSON.stringify({ order_id: id, reason: s.querySelector("#cReason").value.trim(), created_client: new Date().toISOString(), app: APP_VERSION }, null, 2) + "\n", `Cancel ${o.ticker} order`);
+        S.cancels.add(id); closeSheet(); renderOverview(); toast("Cancel sent to GitHub"); setTimeout(() => load(true), 40000);
+      }catch(e){ btn.disabled = false; btn.textContent = "Cancel order"; toast(explain(e), 4200); }
+    };
+  });
+}
+
+/* ------------------------------------------------------------------ trade */
+function prefillTicket(t, side){
+  S.ticket.side = side; S.ticket.size = side === "SELL" ? "all" : "notional";
+  renderTrade(); $("#tTicker").value = t; updateEstimate(); route("trade");
+}
+function renderTrade(){
+  const el = $("#view-trade");
+  if (!S.cfg){ el.innerHTML = connectBanner(); return; }
+  const k = S.ticket, sell = k.side === "SELL";
+  if (!sell && k.size === "all") k.size = "notional";
+  const draft = LS.get("ticketDraft", {});
+  el.innerHTML = `<div class="two-col"><div>
+    <h2>New order</h2>
+    <div class="seg side" id="sideSeg"><button data-v="BUY" class="${!sell ? "on" : ""}">Buy</button><button data-v="SELL" class="${sell ? "on" : ""}">Sell</button></div>
+    <label class="f" for="tTicker">Ticker</label>
+    <input class="in big-input" id="tTicker" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="AAPL" maxlength="12" value="${esc(draft.ticker || "")}">
+    <label class="f">Size</label>
+    <div class="seg" id="sizeSeg">${[["notional","Dollars"],["pct","% of NAV"],["shares","Shares"]].concat(sell ? [["all","All"]] : []).map(([v, l]) => `<button data-v="${v}" class="${k.size === v ? "on" : ""}">${l}</button>`).join("")}</div>
+    <input class="in ${k.size === "all" ? "hidden" : ""}" id="tAmount" inputmode="decimal" style="margin-top:8px" placeholder="${k.size === "pct" ? "5" : k.size === "shares" ? "1000" : "500,000 or 500k"}" value="${esc(draft.amount || "")}">
+    <div class="hint" id="tEstimate"></div>
+    <label class="f" for="tThesis">${sell ? "Why are you selling?" : "Thesis: why this, why now?"}</label>
+    <textarea class="in" id="tThesis" rows="5" placeholder="${sell ? "Thesis played out / broke because… What changed?" : "What does the market have wrong? What's the catalyst? Why will it work?"}">${esc(draft.thesis || "")}</textarea>
+    <div class="wc" id="tWc"></div>
+    <label class="f" for="tInvalid">What would prove you wrong?</label>
+    <textarea class="in" id="tInvalid" rows="2" placeholder="If gross margin drops under 40% for two quarters, I'm out.">${esc(draft.invalidation || "")}</textarea>
+    <div class="grid2">
+      <div><label class="f" for="tTarget">Target price</label><input class="in" id="tTarget" inputmode="decimal" placeholder="Optional" value="${esc(draft.target || "")}"></div>
+      <div><label class="f" for="tStop">Exit / stop price</label><input class="in" id="tStop" inputmode="decimal" placeholder="Optional" value="${esc(draft.stop || "")}"></div>
+    </div>
+    <div class="grid2">
+      <div><label class="f" for="tHorizon">Horizon</label><select class="in" id="tHorizon">${["Days to weeks","1–6 months","6–12 months","1–3 years","3+ years"].map(h => `<option ${h === (draft.horizon || "6–12 months") ? "selected" : ""}>${h}</option>`).join("")}</select></div>
+      <div><label class="f">Conviction</label><div class="conv" id="tConv">${[1,2,3,4,5].map(i => `<button type="button" data-v="${i}" class="${i <= k.conv ? "on" : ""}">${i}</button>`).join("")}</div></div>
+    </div>
+    <button class="btn primary wide" id="tReview">Review order</button>
+  </div><div>
+    <div class="rules" style="margin-top:46px">
+      <b>How fills work</b><br>
+      Your order is timestamped by GitHub's servers the moment it's saved. It fills at the official <b>4:00 PM ET closing price</b> on the first close after that, plus ${S.cfg.slippage_bps ?? 5} bp slippage and ${S.cfg.commission_bps ?? 1} bp commission.<br><br>
+      Sent after 4:00 PM ET, or on a weekend? It waits for the next trading day's close. Long only, no leverage, so buys need the cash.
+    </div>
+    <div class="rules" id="bp"></div>
+  </div></div>`;
+
+  const saveDraft = () => LS.set("ticketDraft", { ticker: $("#tTicker").value, amount: $("#tAmount").value, thesis: $("#tThesis").value,
+    invalidation: $("#tInvalid").value, target: $("#tTarget").value, stop: $("#tStop").value, horizon: $("#tHorizon").value });
+  el.querySelectorAll("#sideSeg button").forEach(x => x.onclick = () => { saveDraft(); k.side = x.dataset.v; renderTrade(); });
+  el.querySelectorAll("#sizeSeg button").forEach(x => x.onclick = () => { saveDraft(); k.size = x.dataset.v; renderTrade(); });
+  el.querySelectorAll("#tConv button").forEach(x => x.onclick = () => { k.conv = +x.dataset.v; el.querySelectorAll("#tConv button").forEach(y => y.classList.toggle("on", +y.dataset.v <= k.conv)); });
+  el.querySelectorAll("input,textarea,select").forEach(x => x.addEventListener("input", () => { saveDraft(); updateEstimate(); }));
+  $("#tTicker").addEventListener("input", e => { const p = e.target.selectionStart; e.target.value = e.target.value.toUpperCase(); try{ e.target.setSelectionRange(p, p); }catch{} });
+  $("#tReview").onclick = reviewOrder;
+  updateEstimate();
+}
+function ticketValues(){
+  const k = S.ticket, b = book();
+  const ticker = $("#tTicker").value.trim().toUpperCase().replace(".", "-");
+  const amt = parseAmount($("#tAmount").value);
+  let sizing = null, estNotional = null;
+  const px = lastPrice(ticker);
+  if (k.size === "all") sizing = { type: "all" };
+  else if (k.size === "shares" && amt > 0) { sizing = { type: "shares", value: Math.floor(amt) }; if (px) estNotional = px * Math.floor(amt); }
+  else if (k.size === "notional" && amt > 0) { sizing = { type: "notional", value: Math.round(amt) }; estNotional = amt; }
+  else if (k.size === "pct" && amt > 0) { const v = Math.round(b.nav * amt / 100); sizing = { type: "notional", value: v, pct_nav: amt }; estNotional = v; }
+  return { ticker, sizing, px, estNotional, b,
+    thesis: $("#tThesis").value.trim(), invalidation: $("#tInvalid").value.trim(),
+    target: parseAmount($("#tTarget").value), stop: parseAmount($("#tStop").value), horizon: $("#tHorizon").value };
+}
+function updateEstimate(){
+  if (!$("#tTicker")) return;
+  const v = ticketValues(), k = S.ticket, held = S.state?.positions?.[v.ticker];
+  let h = "";
+  if (k.size === "all") h = held ? `Sells all ${fmt0.format(held.shares)} shares (≈ ${money(held.shares * held.last_price)})` : v.ticker ? `You don't hold ${esc(v.ticker)}.` : "";
+  else if (v.estNotional){
+    h = `≈ ${money(v.estNotional)} · ${pct(v.estNotional / v.b.nav, 1, false)} of NAV`;
+    if (v.px) h += ` · last close ${money(v.px, true)}${k.size !== "shares" ? ` → ~${fmt0.format(Math.floor(v.estNotional / v.px))} sh` : ""}`;
+  } else if (v.sizing?.type === "shares") h = `${fmt0.format(v.sizing.value)} shares at the closing price`;
+  if (k.side === "SELL" && v.ticker && !held && k.size !== "all") h = `You don't hold ${esc(v.ticker)}. Sells need shares (no shorting).`;
+  $("#tEstimate").innerHTML = h;
+  const n = words(v.thesis); $("#tWc").textContent = n ? `${n} word${n === 1 ? "" : "s"}` : "";
+  const avail = v.b.cash - pendingBuysEstimate();
+  $("#bp").innerHTML = `<b>Buying power</b><br>${money(v.b.cash)} cash${pendingBuysEstimate() ? ` · ≈ ${money(Math.max(0, avail))} after pending buys` : ""}`;
+}
+function reviewOrder(){
+  const v = ticketValues(), k = S.ticket;
+  const err = !/^[A-Z0-9][A-Z0-9\-^=]{0,11}$/.test(v.ticker) ? "Enter a ticker, like AAPL or BRK.B."
+    : !v.sizing ? "Enter a size."
+    : v.thesis.length < 30 ? "Write at least a couple of sentences. This is the part interviewers care about."
+    : k.side === "BUY" && v.estNotional && v.estNotional > v.b.cash - pendingBuysEstimate() + 1 ? `That's more than your buying power (${money(Math.max(0, v.b.cash - pendingBuysEstimate()))}).`
+    : null;
+  if (err){ toast(err, 3600); return; }
+  const fd = fillDateFor(null);
+  sheet(`<h3><span class="${k.side === "BUY" ? "up" : "down"}">${k.side === "BUY" ? "Buy" : "Sell"}</span> ${esc(v.ticker)}</h3>
+    <p class="muted" style="margin-top:0">${esc(sizingText({ sizing: v.sizing }))}${v.estNotional && v.sizing.type !== "notional" ? ` · ≈ ${money(v.estNotional)}` : ""}</p>
+    <div class="rules" style="margin-top:6px">Fills at the <b>${fd === todayET() ? "4:00 PM ET close today" : fmtDate(fd, { weekday:"long", month:"short", day:"numeric" }) + " close"}</b>, as long as GitHub gets it before then. Once it's sent, it's on the record for good. You can cancel before the close, and the cancel goes on the record too.</div>
+    ${thesisBlock({ side: k.side, thesis: v.thesis, invalidation: v.invalidation, target_price: v.target > 0 ? v.target : null, stop_price: v.stop > 0 ? v.stop : null, horizon: v.horizon, conviction: k.conv, sizing: v.sizing })}
+    <button class="btn primary wide" id="send">Send to GitHub</button><button class="btn wide" data-close style="margin-top:8px">Edit</button>`, s => {
+    s.querySelector("#send").onclick = async () => {
+      const btn = s.querySelector("#send"); btn.disabled = true; btn.textContent = "Sending…";
+      const now = new Date(), p = etParts(now);
+      const id = `${p.y}${p.m}${p.d}-${String(p.h).padStart(2, "0")}${String(p.min).padStart(2, "0")}${String(p.s).padStart(2, "0")}-${k.side.toLowerCase()}-${v.ticker.toLowerCase().replace(/[^a-z0-9]/g, "")}-${rand(4)}`;
+      const path = `orders/${p.y}/${p.m}/${id}.json`;
+      const order = { id, ticker: v.ticker, side: k.side, sizing: v.sizing, thesis: v.thesis, invalidation: v.invalidation || null,
+        target_price: v.target > 0 ? v.target : null, stop_price: v.stop > 0 ? v.stop : null, horizon: v.horizon, conviction: k.conv,
+        created_client: now.toISOString(), app: APP_VERSION };
+      try{
+        await GH.put(path, JSON.stringify(order, null, 2) + "\n", `${k.side === "BUY" ? "Buy" : "Sell"} ${v.ticker}: ${v.thesis.slice(0, 60).replace(/\s+/g, " ")}`);
+        order._path = path; order._received_at = null; S.orderCache[id] = order;
+        S.pending.unshift(order); S.orderPaths.push(path); saveCache();
+        LS.del("ticketDraft"); closeSheet(); renderTrade(); renderOverview(); route("overview");
+        toast("Order sent. GitHub's receipt shows up in about a minute.", 3800);
+        setTimeout(() => load(true), 45000);
+      }catch(e){ btn.disabled = false; btn.textContent = "Send to GitHub"; toast(explain(e), 4500); }
+    };
+  });
+}
+
+/* ------------------------------------------------------------------ journal */
+const JOURNAL_TEMPLATE = "## Markets today\n\n\n## What I did and why\n\n\n## What I'm watching\n\n\n## What I got wrong or learned\n\n";
+const RESEARCH_TEMPLATE = "## The pitch\n\n\n## What the market is missing\n\n\n## Valuation\n\n\n## Risks\n\n\n## What would change my mind\n\n";
+function renderJournal(){
+  const el = $("#view-journal");
+  if (!S.cfg){ el.innerHTML = connectBanner(); return; }
+  const ed = S.editing || { kind: "journal", date: todayET() };
+  S.editing = ed;
+  const isJ = ed.kind === "journal";
+  const path = isJ ? `journal/${ed.date.slice(0, 4)}/${ed.date.slice(5, 7)}/${ed.date}.md` : ed.path || null;
+  const exists = path && S.shaOf.has(path);
+  const st = streaks();
+  el.innerHTML = `<div class="two-col"><div>
+    <div class="seg" id="jKind" style="margin-bottom:6px"><button data-v="journal" class="${isJ ? "on" : ""}">Daily journal</button><button data-v="research" class="${!isJ ? "on" : ""}">Research note</button></div>
+    <h2>${isJ ? (ed.date === todayET() ? "Today" : fmtDate(ed.date, { weekday:"long", month:"short", day:"numeric" })) : (ed.path ? "Edit note" : "New research note")}
+      <span class="faint small">${isJ ? fmtDate(ed.date, { month:"long", day:"numeric", year:"numeric" }) : ""}</span></h2>
+    ${!isJ ? `<input class="in" id="jTitle" placeholder="Title, e.g. Why I'm long Costco" value="${esc(ed.title || "")}" ${ed.path ? "disabled" : ""}>` : ""}
+    <textarea class="in" id="jBody" rows="16" style="margin-top:8px;font-size:15px" placeholder="Loading…" disabled></textarea>
+    <div class="wc" id="jWc"></div>
+    <div class="btn-row" style="margin-top:10px">
+      <button class="btn primary" id="jSave" style="flex:1" disabled>${exists ? "Save changes" : "Save to GitHub"}</button>
+      ${!isJ || ed.date !== todayET() ? `<button class="btn" id="jNew">${isJ ? "Back to today" : "New note"}</button>` : ""}
+    </div>
+    <p class="tiny faint" id="jStatus">${exists ? "Edits get a new GitHub timestamp. The original version stays in the record." : "Drafts are kept on this device until you save."}</p>
+  </div><div>
+    <h2>${st.today ? "✓ Journaled today" : "Streak"} <span class="faint small">· ${st.cur} weekday${st.cur === 1 ? "" : "s"} running · best ${st.best}</span></h2>
+    <div class="list" id="jList">${entryList()}</div>
+  </div></div>`;
+
+  el.querySelectorAll("#jKind button").forEach(x => x.onclick = () => { S.editing = x.dataset.v === "journal" ? { kind: "journal", date: todayET() } : { kind: "research" }; renderJournal(); });
+  $("#jNew") && ($("#jNew").onclick = () => { S.editing = isJ ? { kind: "journal", date: todayET() } : { kind: "research" }; renderJournal(); });
+  el.querySelectorAll("[data-entry]").forEach(x => x.onclick = () => viewEntry(x.dataset.entry));
+  loadEditor(path, exists, isJ);
+}
+async function loadEditor(path, exists, isJ){
+  const body = $("#jBody"), key = "draft:" + (path || "research-new");
+  let text = LS.get(key, null);
+  if (text == null){
+    if (exists){ try{ text = await GH.raw(path) || ""; }catch(e){ text = ""; toast(explain(e)); } }
+    else text = isJ ? JOURNAL_TEMPLATE : RESEARCH_TEMPLATE;
+  }
+  if (!$("#jBody") || $("#jBody") !== body) return;
+  body.value = text; body.disabled = false; body.placeholder = ""; $("#jSave").disabled = false;
+  const wc = () => { const n = words(body.value.replace(/^#+ .*$/gm, "")); $("#jWc").textContent = `${n} word${n === 1 ? "" : "s"}`; };
+  wc();
+  body.addEventListener("input", () => { LS.set(key, body.value); wc(); });
+  $("#jSave").onclick = async () => {
+    const btn = $("#jSave"), ed = S.editing;
+    let p = path;
+    if (!isJ && !p){
+      const title = $("#jTitle").value.trim(); if (!title){ toast("Give the note a title."); return; }
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "note";
+      const d = todayET(); p = `research/${d.slice(0, 4)}/${d}-${slug}.md`;
+      if (S.shaOf.has(p)) p = p.replace(/\.md$/, `-${rand(3)}.md`);
+    }
+    let content = body.value.trimEnd() + "\n";
+    if (!isJ && !path) content = `# ${$("#jTitle").value.trim()}\n\n` + content;
+    if (words(content.replace(/^#+ .*$/gm, "")) < 5){ toast("Write a little more first."); return; }
+    btn.disabled = true; btn.textContent = "Saving…";
+    try{
+      await GH.put(p, content, isJ ? `Journal: ${ed.date}` : `Research: ${$("#jTitle")?.value.trim() || stem(p)}`);
+      LS.del(key);
+      if (isJ){ if (!S.journal.some(j => j.date === ed.date)) S.journal.unshift({ date: ed.date, path: p }); S.journal.sort((a, b) => a.date < b.date ? 1 : -1); }
+      else if (!S.research.some(r => r.path === p)){ S.research.unshift({ path: p, date: todayET(), title: $("#jTitle").value.trim() }); S.editing = { kind: "research", path: p, title: $("#jTitle").value.trim() }; }
+      saveCache(); toast("Saved to GitHub ✓"); renderJournal(); renderOverview(); renderRecord();
+    }catch(e){ btn.disabled = false; btn.textContent = "Save to GitHub"; toast(explain(e), 4500); }
+  };
+}
+function entryList(){
+  const items = [...S.journal.map(j => ({ k: "j", date: j.date, path: j.path, title: fmtDate(j.date, { weekday:"short", month:"short", day:"numeric", year:"numeric" }), sub: "Daily journal" })),
+    ...S.research.map(r => ({ k: "r", date: r.date, path: r.path, title: r.title, sub: "Research · " + (r.date ? fmtDate(r.date) : "") }))]
+    .sort((a, b) => (a.date + a.k) < (b.date + b.k) ? 1 : -1).slice(0, 60);
+  if (!items.length) return `<div class="empty">Nothing yet. Your first entry shows up here.</div>`;
+  return items.map(i => `<button class="row" data-entry="${esc(i.path)}"><span class="main"><div class="t" style="text-transform:${i.k === "r" ? "capitalize" : "none"}">${esc(i.title)}</div><div class="s">${esc(i.sub)}</div></span><span class="faint">›</span></button>`).join("");
+}
+async function viewEntry(path){
+  sheet(`<h3>Loading…</h3>`);
+  try{
+    const t = await GH.raw(path) || "";
+    const jm = path.match(/^journal\/.*?(\d{4}-\d{2}-\d{2})\.md$/);
+    sheet(`<h3>${jm ? fmtDate(jm[1], { weekday:"long", month:"long", day:"numeric", year:"numeric" }) : "Research note"}</h3>
+      <div class="md">${mdToHtml(t)}</div>
+      <div class="btn-row" style="margin-top:14px"><button class="btn" id="vEdit">Edit</button><button class="btn" data-close style="flex:1">Close</button></div>`, s => {
+      s.querySelector("#vEdit").onclick = () => {
+        closeSheet();
+        if (jm) S.editing = { kind: "journal", date: jm[1] };
+        else { const r = S.research.find(x => x.path === path); S.editing = { kind: "research", path, title: r?.title || stem(path) }; }
+        renderJournal(); route("journal");
+      };
+    });
+  }catch(e){ sheet(`<h3>Couldn't open it</h3><p class="down">${esc(explain(e))}</p><button class="btn wide" data-close>Close</button>`); }
+}
+
+/* ------------------------------------------------------------------ record */
+function renderRecord(){
+  const el = $("#view-record");
+  if (!S.cfg){ el.innerHTML = connectBanner(); return; }
+  const act = activeDays(), st = streaks();
+  const today = todayET();
+  let mon = today; while (weekday(mon) !== 1) mon = addDays(mon, -1);
+  const weeks = 26, start = addDays(mon, -7 * (weeks - 1));
+  let cells = "", months = [];
+  for (let w = 0; w < weeks; w++){
+    const wk = addDays(start, 7 * w);
+    if (w % 6 === 0) months.push(fmtDate(wk, { month: "short" }));
+    for (let d = 0; d < 5; d++){
+      const day = addDays(wk, d), n = act.get(day) || 0;
+      cells += `<span class="${n ? "l" + Math.min(3, n) : ""}${day === today ? " today" : ""}" title="${day}${n ? ` · ${n} item${n > 1 ? "s" : ""}` : ""}" style="${day > today ? "opacity:.35" : ""}"></span>`;
+    }
+  }
+  const filled = S.fills.filter(f => f.status === "FILLED");
+  const sells = filled.filter(f => f.side === "SELL"), wins = sells.filter(f => f.realized_pnl > 0);
+  const closeRuns = (S.runs || []).filter(r => /close/i.test(r.name));
+  const lastRun = closeRuns[0];
+  el.innerHTML = `<div class="two-col"><div>
+    <h2>Activity</h2>
+    <div class="card">
+      <div class="stats" style="margin-top:0">
+        <div class="stat"><div class="k">Days journaled</div><div class="v">${st.total}</div></div>
+        <div class="stat"><div class="k">Best streak</div><div class="v">${st.best}</div></div>
+        <div class="stat"><div class="k">Orders</div><div class="v">${S.orderPaths.length}</div></div>
+        <div class="stat"><div class="k">Research</div><div class="v">${S.research.length}</div></div>
+      </div>
+      <div class="heat" style="grid-template-columns:repeat(${weeks},1fr)">${cells}</div>
+      <div class="heat-months">${months.map(m => `<span>${m}</span>`).join("")}</div>
+      <p class="tiny faint" style="margin:8px 0 0">Last 26 weeks, weekdays. Darker means more work that day: journal, orders, research.</p>
+    </div>
+    <h2>Trades <span class="faint small">${sells.length ? `· ${wins.length} of ${sells.length} closed trades made money` : ""}</span></h2>
+    <div class="list">${S.fills.length ? [...S.fills].reverse().slice(0, 80).map(f => `
+      <button class="row" data-order="${esc(f.order_id)}">
+        <span class="tick" style="color:${f.side === "BUY" ? "var(--green)" : "var(--red)"}">${esc(f.side || "")}</span>
+        <span class="main"><div class="t">${esc(f.ticker)} ${f.status === "FILLED" ? `· ${fmt0.format(f.shares)} @ ${money(f.price, true)}` : ""}</div>
+          <div class="s">${fmtDate(f.date, { month:"short", day:"numeric", year:"numeric" })} close${f.status !== "FILLED" ? ` · ${esc(f.reason || f.status.toLowerCase())}` : ""}</div></span>
+        <span class="r">${f.status === "FILLED" ? (f.realized_pnl != null ? `<span class="${cls(f.realized_pnl)}">${signedMoney(f.realized_pnl)}</span>` : `<span class="faint">${money(f.notional)}</span>`)
+          : `<span class="pill ${f.status === "REJECTED" ? "bad" : ""}">${f.status.toLowerCase()}</span>`}</span>
+      </button>`).join("") : `<div class="empty">No trades yet.</div>`}</div>
+  </div><div>
+    <h2>Proof</h2>
+    <div class="card small">
+      <p style="margin-top:0">Nobody has to take your word for this record:</p>
+      <ul class="steps" style="padding-left:18px">
+        <li>GitHub's servers timestamp every order and journal entry. Your phone's clock never counts.</li>
+        <li>Orders fill at the official close after GitHub receives them, so you can't backdate a trade or pick a price.</li>
+        <li>A bot does every fill and mark. Each night's ledger is hashed, chained to the night before and anchored to Bitcoin with OpenTimestamps.</li>
+      </ul>
+      <dl class="kv"><dt>Daily close job</dt><dd>${lastRun ? `<span class="pill ${lastRun.conclusion === "success" ? "good" : lastRun.conclusion ? "bad" : "warn"}">${esc(lastRun.conclusion || lastRun.status)}</span> ${fmtTime(lastRun.updated_at)}` : S.runs === null ? `<span class="faint">add “Actions: Read” to the token to see this</span>` : "not run yet"}</dd>
+      <dt>Trading days recorded</dt><dd>${S.nav.length}</dd>
+      <dt>Realized P&L</dt><dd class="${cls(S.state?.realized_pnl || 0)}">${signedMoney(S.state?.realized_pnl || 0)}</dd>
+      <dt>Dividends</dt><dd>${money(S.state?.dividends || 0)}</dd>
+      <dt>Costs paid</dt><dd>${money(S.state?.costs || 0)}</dd></dl>
+      ${S.repo?.html_url ? `<a href="${esc(S.repo.html_url)}" target="_blank" rel="noopener">Open the repo's track-record page ↗</a>` : ""}
+    </div>
+  </div></div>`;
+  el.querySelectorAll("[data-order]").forEach(x => x.onclick = () => orderSheet(x.dataset.order));
+}
+
+/* ------------------------------------------------------------------ settings */
+function renderSettings(){
+  const el = $("#view-settings"), c = S.conn || {};
+  const connected = !!c.token;
+  const stale = S.engineStale && S.engineStale.length;
+  el.innerHTML = `<div class="two-col"><div>
+    <h2>${connected ? "Connection" : "Connect your private repo"}</h2>
+    ${!connected ? `<div class="card small">
+      <ol class="steps" style="margin-top:0">
+        <li>On GitHub, create a <b>private</b> repo, e.g. <code class="k">portfolio-track-record</code>. Tick “Add a README file”.</li>
+        <li>Create a <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">fine-grained token</a>. Under <b>Repository access</b>, choose “Only select repositories” and pick that repo. Under <b>Permissions</b>, set <b>Contents</b> and <b>Workflows</b> to “Read and write” and <b>Actions</b> to “Read-only”. Give it the longest expiration GitHub offers.</li>
+        <li>Paste it below. It's only stored in this browser and only ever sent to GitHub.</li>
+      </ol></div>` : ""}
+    <div class="card">
+      <label class="f" style="margin-top:0">GitHub username</label><input class="in" id="sOwner" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(c.owner || "")}" placeholder="your-username">
+      <label class="f">Repo name</label><input class="in" id="sRepo" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(c.repo || "")}" placeholder="portfolio-track-record">
+      <label class="f">Token</label><input class="in" id="sToken" type="password" autocomplete="off" value="${esc(c.token || "")}" placeholder="github_pat_…">
+      <div class="btn-row" style="margin-top:14px"><button class="btn primary" id="sSave" style="flex:1">${connected ? "Save & reconnect" : "Connect"}</button>${connected ? `<button class="btn danger" id="sOut">Sign out</button>` : ""}</div>
+      ${S.error && connected ? `<p class="down small">${esc(explain(S.error))}</p>` : ""}
+      ${S.repo && connected && !S.error ? `<p class="small muted" style="margin-bottom:0">${S.repo.private ? "🔒 Private" : "⚠️ <b class='down'>Public</b>. Anyone can see it. Make it private in the repo's settings."} · <a href="${esc(S.repo.html_url)}" target="_blank" rel="noopener">${esc(S.repo.full_name)} ↗</a></p>` : ""}
+    </div>
+    ${connected && S.setupNeeded && !S.error ? setupCard() : ""}
+  </div><div>
+    ${connected && !S.setupNeeded && S.cfg ? `<h2>Repo</h2><div class="card small">
+      <dl class="kv" style="margin-top:0"><dt>Fund</dt><dd>${esc(S.cfg.fund_name)}</dd><dt>Started</dt><dd>${fmtDate(S.cfg.inception, { month:"short", day:"numeric", year:"numeric" })} with ${money(S.cfg.starting_cash)}</dd>
+      <dt>Benchmark</dt><dd>${esc(S.cfg.benchmark)}</dd><dt>Costs</dt><dd>${S.cfg.slippage_bps} bp slippage + ${S.cfg.commission_bps} bp commission</dd>
+      <dt>Engine</dt><dd>${S.engineStale == null ? "checking…" : stale ? `<span class="pill warn">update available</span>` : `<span class="pill good">up to date</span>`}</dd></dl>
+      ${stale ? `<button class="btn" id="sUpdate">Update engine files</button><p class="tiny faint">Rewrites ${S.engineStale.map(esc).join(", ")} in your repo. Your trades and journal aren't touched.</p>` : ""}
+      ${S.runs && S.runs.length ? `<div class="muted" style="margin-top:8px">Recent jobs</div>${S.runs.slice(0, 5).map(r => `<div style="display:flex;justify-content:space-between;gap:8px;margin-top:4px"><span>${esc(r.name)}</span><span><span class="pill ${r.conclusion === "success" ? "good" : r.conclusion ? "bad" : "warn"}">${esc(r.conclusion || r.status)}</span> <span class="faint">${fmtTime(r.created_at)}</span></span></div>`).join("")}` : ""}
+      </div>` : ""}
+    <h2>On your phone</h2>
+    <div class="card small muted">In Safari, tap Share → <b>Add to Home Screen</b> and it opens like an app. Your token is saved per browser, so on a new device you'll paste it once.</div>
+    <p class="tiny faint" style="margin-top:14px">Portfolio Desk ${APP_VERSION}</p>
+  </div></div>`;
+  $("#sSave").onclick = () => {
+    const owner = $("#sOwner").value.trim().replace(/^https?:\/\/github\.com\//, "").split("/")[0];
+    let repo = $("#sRepo").value.trim(); if (repo.includes("/")) repo = repo.split("/").pop();
+    const token = $("#sToken").value.trim();
+    if (!owner || !repo || !token){ toast("Fill in all three."); return; }
+    S.conn = { owner, repo: repo.replace(/\.git$/, ""), token }; LS.set("conn", S.conn);
+    S.cfg = null; S.state = null; S.nav = []; S.fills = []; S.pending = []; S.journal = []; S.research = []; S.orderPaths = []; S.repo = null;
+    LS.del("cache"); load();
+  };
+  $("#sOut") && ($("#sOut").onclick = () => { LS.del("conn"); LS.del("cache"); location.hash = "#settings"; location.reload(); });
+  $("#sSetup") && ($("#sSetup").onclick = runSetup);
+  $("#sUpdate") && ($("#sUpdate").onclick = updateEngine);
+}
+function setupCard(){
+  return `<h2>Set up the repo</h2><div class="card">
+    <p class="small muted" style="margin-top:0">This adds the engine and two daily jobs to <b>${esc(S.conn.repo)}</b>, and starts your $10,000,000 paper portfolio today.</p>
+    <label class="f">Portfolio name</label><input class="in" id="suName" value="$10M Paper Portfolio">
+    <label class="f">Your name (shown on the track record)</label><input class="in" id="suMgr" value="Jeh Dinshaw">
+    <label class="f">Benchmark</label><input class="in" id="suBench" value="SPY" autocapitalize="characters">
+    <button class="btn primary wide" id="sSetup">Set up repo</button>
+    <ol class="steps progress" id="suProg"></ol>
+  </div>`;
+}
+async function runSetup(){
+  const btn = $("#sSetup"); btn.disabled = true; btn.textContent = "Setting up…";
+  const prog = $("#suProg"); prog.innerHTML = "";
+  const step = (t) => { const li = document.createElement("li"); li.textContent = t; prog.appendChild(li); return li; };
+  try{
+    if (S.repo && !S.repo.private){
+      const li = step("This repo is public. Make it private on GitHub first (Settings → General → Danger Zone → Change visibility), then try again.");
+      li.className = "err"; btn.disabled = false; btn.textContent = "Set up repo"; return;
+    }
+    const cfg = { fund_name: $("#suName").value.trim() || "$10M Paper Portfolio", manager: $("#suMgr").value.trim(),
+      starting_cash: START_CASH, inception: todayET(), benchmark: ($("#suBench").value.trim() || "SPY").toUpperCase(),
+      slippage_bps: 5, commission_bps: 1 };
+    for (const [path, text] of Object.entries(REPO_FILES)){
+      const li = step("Adding " + path);
+      await GH.put(path, text, "Set up track-record engine: " + path); li.className = "done";
+    }
+    let li = step("Writing config.json");
+    await GH.put("config.json", JSON.stringify(cfg, null, 2) + "\n", "Start the $10M paper portfolio"); li.className = "done";
+    li = step("Writing README.md");
+    const readme = `# ${cfg.fund_name}\n\n${cfg.manager ? `**${cfg.manager}** · ` : ""}Paper portfolio · started ${fmtDate(cfg.inception, { month:"short", day:"numeric", year:"numeric" })} with $10,000,000 · benchmark ${cfg.benchmark} (total return)\n\nThe first mark happens after the next 4:00 PM ET close. From then on this page rebuilds itself every trading day with performance, positions, trades and the work behind them.\n`;
+    await GH.put("README.md", readme, "Track record page"); li.className = "done";
+    step("Done. Your portfolio is live.").className = "done";
+    toast("Repo is set up ✓"); setTimeout(() => { load(); route("overview"); }, 900);
+  }catch(e){
+    step(explain(e)).className = "err"; btn.disabled = false; btn.textContent = "Try again";
+  }
+}
+async function updateEngine(){
+  const btn = $("#sUpdate"); btn.disabled = true; btn.textContent = "Updating…";
+  try{
+    for (const path of S.engineStale) await GH.put(path, REPO_FILES[path], `Update ${path} to Portfolio Desk ${APP_VERSION}`);
+    toast("Engine updated ✓"); load(true);
+  }catch(e){ btn.disabled = false; btn.textContent = "Update engine files"; toast(explain(e), 4500); }
+}
+
+/* ------------------------------------------------------------------ boot */
+buildTabs();
+$("#refreshBtn").onclick = () => load();
+window.addEventListener("hashchange", () => route(location.hash.slice(1)));
+let _rz; window.addEventListener("resize", () => { clearTimeout(_rz); _rz = setTimeout(() => S.tab === "overview" && drawChart(), 150); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && S.conn?.token && Date.now() - new Date(S.loadedAt || 0) > 60000) load(true); });
+route(location.hash.slice(1) || (S.conn?.token ? "overview" : "settings"));
+render();
+if (S.conn?.token) load(true);
+</script>
+</body>
+</html>
